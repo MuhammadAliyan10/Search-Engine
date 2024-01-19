@@ -7,18 +7,13 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.*;
 import javafx.scene.control.Hyperlink;
-
 import javafx.application.Application;
 import javafx.application.HostServices;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -33,59 +28,72 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/Frontend/Search.fxml"));
-        primaryStage.setTitle("Google");
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/Frontend/Images/logo.png")));
-        // !Top google image
+        // Main tab for initial UI setup
+        TabPane tabPane = new TabPane();
+        Tab mainTab = new Tab("Google");
+        mainTab.setClosable(false);
+        VBox mainTabContent = new VBox(20);
+        mainTabContent.setBackground(
+                new Background(new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
+        mainTabContent.setAlignment(Pos.TOP_CENTER);
+
+        // Top Google image
         Image headingImage = new Image(getClass().getResourceAsStream("/Frontend/Images/Google.png"));
         ImageView imageView = new ImageView(headingImage);
         imageView.setFitWidth(500);
         imageView.setFitHeight(170);
-        // ! Input Text Field
+        mainTabContent.getChildren().addAll(imageView);
+
+        // Input Text Field
         TextField searchInputTextField = new TextField();
         searchInputTextField.setPromptText("Search");
-        searchInputTextField.setMaxWidth(550); // Set the max width to the same value as pref width
+        searchInputTextField.setMaxWidth(550);
         searchInputTextField.setMinHeight(40);
         searchInputTextField.setPrefWidth(550);
-        searchInputTextField.setMinHeight(40); // You can set the height as needed
+        searchInputTextField.setMinHeight(40);
         searchInputTextField.setFont(new javafx.scene.text.Font(15));
         searchInputTextField.getStyleClass().add("search_input");
-        // ! Sudmit Button
+        mainTabContent.getChildren().addAll(searchInputTextField);
+
+        // Submit Button
         Button ButtonSearch = new Button();
         ButtonSearch.setText("Google Search");
         ButtonSearch.getStyleClass().add("search_button");
         Button feelingLucky = new Button();
         feelingLucky.setText("Feeling Lucky");
         feelingLucky.getStyleClass().add("search_button");
-        // ! Hbox for button
+
+        // Hbox for button
         HBox button = new HBox(10);
         button.getChildren().addAll(ButtonSearch, feelingLucky);
         HBox.setMargin(ButtonSearch, new Insets(0, 10, 153, 500));
+        mainTabContent.getChildren().addAll(button);
 
-        TabPane tabPane = new TabPane();
-        ButtonSearch.setOnAction(e -> showSearchResults(tabPane, searchInputTextField.getText()));
-        // ! First vmBox
-        VBox root1 = new VBox(20);
-        root1.setBackground(new Background(new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
-        root1.setAlignment(Pos.TOP_CENTER);
-        VBox.setMargin(imageView, new Insets(100, 0, 0, 0));
-        VBox.setMargin(searchInputTextField, new Insets(20, 0, 0, 0));
+        mainTab.setContent(mainTabContent);
+        tabPane.getTabs().add(mainTab);
+
+        VBox.setMargin(imageView, new Insets(130, 0, 0, 0));
+        VBox.setMargin(searchInputTextField, new Insets(40, 0, 0, 0));
         VBox.setMargin(ButtonSearch, new Insets(0, 0, 120, 0));
-        // !Styling Import
-        String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
-        root1.getStylesheets().add(cssFile);
-        // !To show the data
-        root1.getChildren().addAll(tabPane, imageView, searchInputTextField, button);
-        primaryStage.setScene(new Scene(root1, 1270, 685));
-        primaryStage.show();
 
+        // Event handler for search button
+        ButtonSearch.setOnAction(e -> showSearchResults(tabPane, searchInputTextField.getText()));
+
+        String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
+        mainTabContent.getStylesheets().add(cssFile);
+
+        primaryStage.setTitle("Google");
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/Frontend/Images/logo.png")));
+        primaryStage.setScene(new Scene(tabPane, 1270, 685));
+        primaryStage.show();
     }
 
     private void showSearchResults(TabPane tabPane, String query) {
         String body;
+        String search = query;
         try {
             String apiUrl = "https://www.googleapis.com/customsearch/v1?key=AIzaSyAmRBLSpWafSw-CW8G2buGGrvSvAGnKwNo&cx=017576662512468239146:omuauf_lfve&q="
-                    + query;
+                    + search;
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl))
@@ -97,35 +105,44 @@ public class Main extends Application {
             JSONObject jsonResponse = new JSONObject(body);
             if (jsonResponse.has("items")) {
                 JSONArray itemsArray = jsonResponse.getJSONArray("items");
+                int result = itemsArray.length();
                 if (itemsArray.length() > 0) {
-                    List<String> titles = new ArrayList<>();
-                    List<String> links = new ArrayList<>();
+                    String[] titles = new String[itemsArray.length()];
+                    String[] links = new String[itemsArray.length()];
+                    String[] snippets = new String[itemsArray.length()];
+                    String[] displayLink = new String[itemsArray.length()];
 
                     for (int i = 0; i < itemsArray.length(); i++) {
                         JSONObject item = itemsArray.getJSONObject(i);
                         String title = item.getString("title");
                         String link = item.getString("link");
-                        titles.add(title);
-                        links.add(link);
+                        String snippet = item.getString("snippet");
+                        String displaylink = item.getString("displayLink");
+                        titles[i] = (title);
+                        links[i] = (link);
+                        snippets[i] = (snippet);
+                        displayLink[i] = (displaylink);
                     }
 
                     Tab searchTab = new Tab(query);
                     VBox searchResultsContent = new VBox(20);
                     searchResultsContent.setBackground(
-                            new Background(new BackgroundFill(Color.web("#fff"), CornerRadii.EMPTY, Insets.EMPTY)));
-                    if (titles.isEmpty()) {
-                        searchResultsContent.getChildren().add(new Label("No data get."));
+                            new Background(new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
+                    searchResultsContent.getChildren().add(createLabelWithWhiteText("Total results = " + result));
 
+                    if (titles.length == 0) {
+                        searchResultsContent.getChildren().add(createLabelWithWhiteText("No data found."));
                     } else {
-                        for (String title : titles) {
-                            searchResultsContent.getChildren().add(new Label(title));
-                        }
-                        for (String link : links) {
-                            searchResultsContent.getChildren().add(createHyperlink(link, link));
-                        }
 
+                        for (int i = 0; i < titles.length; i++) {
+                            System.out.println();
+                            searchResultsContent.getChildren().add(createLabelWithWhiteText(titles[i]));
+                            searchResultsContent.getChildren().add(createHyperlink(links[i], displayLink[i]));
+                            searchResultsContent.getChildren().add(createLabelWithWhiteText(snippets[i]));
+                            searchResultsContent.getChildren().add(new Label("-------------------------------"));
+
+                        }
                     }
-
                     searchResultsContent.setAlignment(Pos.TOP_LEFT);
                     searchTab.setContent(searchResultsContent);
                     tabPane.getTabs().add(searchTab);
@@ -139,11 +156,18 @@ public class Main extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private Label createLabelWithWhiteText(String text) {
+        Label label = new Label(text);
+        label.setStyle("-fx-text-fill: white;");
+        label.getStyleClass().add("search_label");
+        return label;
     }
 
     private Hyperlink createHyperlink(String url, String text) {
         Hyperlink hyperlink = new Hyperlink(text);
+        hyperlink.getStyleClass().add("href");
         hyperlink.setOnAction(e -> openWebpage(url));
         return hyperlink;
     }
