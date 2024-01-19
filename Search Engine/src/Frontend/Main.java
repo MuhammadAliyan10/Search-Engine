@@ -1,14 +1,27 @@
 package Frontend;
 
 //!Import
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.*;
+import javafx.scene.control.Hyperlink;
+
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -48,29 +61,9 @@ public class Main extends Application {
         HBox button = new HBox(10);
         button.getChildren().addAll(ButtonSearch, feelingLucky);
         HBox.setMargin(ButtonSearch, new Insets(0, 10, 153, 500));
-        // ! Loction for bottom header
-        Label bottomLabel = new Label("Pakistan");
-        bottomLabel.getStyleClass().add("location");
-        bottomLabel.setPrefWidth(Double.MAX_VALUE);
-        // ! Bottom Label
-        Label Privacy = new Label("Privacy");
-        Privacy.getStyleClass().add("bottom_style");
-        Label term = new Label("Term");
-        term.getStyleClass().add("bottom_style");
-        Label Setting = new Label("Setting");
-        Setting.getStyleClass().add("bottom_style");
-        Label about = new Label("About");
-        about.getStyleClass().add("bottom_style");
-        Label advertising = new Label("Advertising");
-        advertising.getStyleClass().add("bottom_style");
-        Label business = new Label("Business");
-        business.getStyleClass().add("bottom_style");
-        Label HowsearchWorks = new Label("How Search Works");
-        HowsearchWorks.getStyleClass().add("bottom_style");
-        // ! Hobox for bottom label
-        HBox bottom = new HBox(10);
-        bottom.getChildren().addAll(about, advertising, business, HowsearchWorks, Privacy, term, Setting);
-        HBox.setMargin(Privacy, new Insets(0, 0, 0, 670));
+
+        TabPane tabPane = new TabPane();
+        ButtonSearch.setOnAction(e -> showSearchResults(tabPane, searchInputTextField.getText()));
         // ! First vmBox
         VBox root1 = new VBox(20);
         root1.setBackground(new Background(new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -78,19 +71,86 @@ public class Main extends Application {
         VBox.setMargin(imageView, new Insets(100, 0, 0, 0));
         VBox.setMargin(searchInputTextField, new Insets(20, 0, 0, 0));
         VBox.setMargin(ButtonSearch, new Insets(0, 0, 120, 0));
-        // ! Second vmBox
-        VBox root2 = new VBox(10);
-        root2.setBackground(new Background(new BackgroundFill(Color.web("#171717"), CornerRadii.EMPTY, Insets.EMPTY)));
-        root2.setAlignment(Pos.BOTTOM_LEFT);
-        root2.getChildren().addAll(bottomLabel, bottom);
         // !Styling Import
         String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
         root1.getStylesheets().add(cssFile);
         // !To show the data
-        root1.getChildren().addAll(imageView, searchInputTextField, button, root2);
+        root1.getChildren().addAll(tabPane, imageView, searchInputTextField, button);
         primaryStage.setScene(new Scene(root1, 1270, 685));
         primaryStage.show();
 
+    }
+
+    private void showSearchResults(TabPane tabPane, String query) {
+        String body;
+        try {
+            String apiUrl = "https://www.googleapis.com/customsearch/v1?key=AIzaSyAmRBLSpWafSw-CW8G2buGGrvSvAGnKwNo&cx=017576662512468239146:omuauf_lfve&q="
+                    + query;
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            body = response.body();
+            JSONObject jsonResponse = new JSONObject(body);
+            if (jsonResponse.has("items")) {
+                JSONArray itemsArray = jsonResponse.getJSONArray("items");
+                if (itemsArray.length() > 0) {
+                    List<String> titles = new ArrayList<>();
+                    List<String> links = new ArrayList<>();
+
+                    for (int i = 0; i < itemsArray.length(); i++) {
+                        JSONObject item = itemsArray.getJSONObject(i);
+                        String title = item.getString("title");
+                        String link = item.getString("link");
+                        titles.add(title);
+                        links.add(link);
+                    }
+
+                    Tab searchTab = new Tab(query);
+                    VBox searchResultsContent = new VBox(20);
+                    searchResultsContent.setBackground(
+                            new Background(new BackgroundFill(Color.web("#fff"), CornerRadii.EMPTY, Insets.EMPTY)));
+                    if (titles.isEmpty()) {
+                        searchResultsContent.getChildren().add(new Label("No data get."));
+
+                    } else {
+                        for (String title : titles) {
+                            searchResultsContent.getChildren().add(new Label(title));
+                        }
+                        for (String link : links) {
+                            searchResultsContent.getChildren().add(createHyperlink(link, link));
+                        }
+
+                    }
+
+                    searchResultsContent.setAlignment(Pos.TOP_LEFT);
+                    searchTab.setContent(searchResultsContent);
+                    tabPane.getTabs().add(searchTab);
+                    tabPane.getSelectionModel().select(searchTab);
+                    body = response.body();
+                }
+            } else {
+                System.out.println("Not That data");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private Hyperlink createHyperlink(String url, String text) {
+        Hyperlink hyperlink = new Hyperlink(text);
+        hyperlink.setOnAction(e -> openWebpage(url));
+        return hyperlink;
+    }
+
+    private void openWebpage(String url) {
+        HostServices hostServices = getHostServices();
+        hostServices.showDocument(url);
     }
 
     public static void main(String[] args) {
