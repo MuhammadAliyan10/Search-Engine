@@ -2,7 +2,10 @@ package Frontend;
 
 //!Import
 import org.json.JSONArray;
+import javafx.scene.control.ScrollPane;
 import org.json.JSONObject;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -73,7 +76,7 @@ public class Main extends Application {
         tabPane.getTabs().add(mainTab);
 
         VBox.setMargin(imageView, new Insets(130, 0, 0, 0));
-        VBox.setMargin(searchInputTextField, new Insets(40, 0, 0, 0));
+        VBox.setMargin(searchInputTextField, new Insets(10, 0, 0, 0));
         VBox.setMargin(ButtonSearch, new Insets(0, 0, 120, 0));
 
         // Event handler for search button
@@ -90,38 +93,41 @@ public class Main extends Application {
 
     private void showSearchResults(TabPane tabPane, String query) {
         String body;
-        String search = query;
+        String search = URLEncoder.encode(query, StandardCharsets.UTF_8);
         try {
-            String apiUrl = "https://www.googleapis.com/customsearch/v1?key=AIzaSyAmRBLSpWafSw-CW8G2buGGrvSvAGnKwNo&cx=017576662512468239146:omuauf_lfve&q="
-                    + search;
+            // String apiUrl =
+            // "https://www.googleapis.com/customsearch/v1?key=AIzaSyAmRBLSpWafSw-CW8G2buGGrvSvAGnKwNo&cx=017576662512468239146:omuauf_lfve&q="
+            // + search;
+            String apiUrl1 = "https://google-search103.p.rapidapi.com/search/?q=" + search + "&num=45&gl=us";
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl))
-                    .GET()
+                    .uri(URI.create(apiUrl1))
+                    .GET().header("X-RapidAPI-Key", "390d3da771msh870980f8383f55fp1838b9jsneee6cb7540d9")
+                    .header("X-RapidAPI-Host", "google-search103.p.rapidapi.com")
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             body = response.body();
             JSONObject jsonResponse = new JSONObject(body);
-            if (jsonResponse.has("items")) {
-                JSONArray itemsArray = jsonResponse.getJSONArray("items");
+            if (jsonResponse.has("results")) {
+                JSONArray itemsArray = jsonResponse.getJSONArray("results");
                 int result = itemsArray.length();
                 if (itemsArray.length() > 0) {
                     String[] titles = new String[itemsArray.length()];
                     String[] links = new String[itemsArray.length()];
-                    String[] snippets = new String[itemsArray.length()];
-                    String[] displayLink = new String[itemsArray.length()];
+                    String[] hostnames = new String[itemsArray.length()];
+                    String[] descriptions = new String[itemsArray.length()];
 
                     for (int i = 0; i < itemsArray.length(); i++) {
                         JSONObject item = itemsArray.getJSONObject(i);
                         String title = item.getString("title");
                         String link = item.getString("link");
-                        String snippet = item.getString("snippet");
-                        String displaylink = item.getString("displayLink");
+                        String hostname = item.getString("hostname");
+                        String description = item.getString("description");
                         titles[i] = (title);
                         links[i] = (link);
-                        snippets[i] = (snippet);
-                        displayLink[i] = (displaylink);
+                        hostnames[i] = (hostname);
+                        descriptions[i] = (description);
                     }
 
                     Tab searchTab = new Tab(query);
@@ -135,19 +141,23 @@ public class Main extends Application {
                     } else {
 
                         for (int i = 0; i < titles.length; i++) {
-                            System.out.println();
                             searchResultsContent.getChildren().add(createLabelWithWhiteText(titles[i]));
-                            searchResultsContent.getChildren().add(createHyperlink(links[i], displayLink[i]));
-                            searchResultsContent.getChildren().add(createLabelWithWhiteText(snippets[i]));
+                            searchResultsContent.getChildren().add(createHyperlink(links[i], links[i]));
+                            searchResultsContent.getChildren().add(createLabelWithWhiteText(hostnames[i]));
+                            searchResultsContent.getChildren().add(createLabelWithWhiteText(descriptions[i]));
                             searchResultsContent.getChildren().add(new Label("-------------------------------"));
 
                         }
                     }
+
                     searchResultsContent.setAlignment(Pos.TOP_LEFT);
-                    searchTab.setContent(searchResultsContent);
+                    VBox containerVBox = new VBox(searchResultsContent);
+                    ScrollPane scrollPane = new ScrollPane(containerVBox);
+                    scrollPane.setFitToWidth(true);
+                    scrollPane.setFitToHeight(true);
+                    searchTab.setContent(scrollPane);
                     tabPane.getTabs().add(searchTab);
                     tabPane.getSelectionModel().select(searchTab);
-                    body = response.body();
                 }
             } else {
                 System.out.println("Not That data");
