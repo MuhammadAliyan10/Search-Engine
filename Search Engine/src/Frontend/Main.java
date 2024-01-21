@@ -49,7 +49,7 @@ public class Main extends Application {
 
         // Input Text Field
         TextField searchInputTextField = new TextField();
-        searchInputTextField.setPromptText("Search");
+        searchInputTextField.setPromptText("Search Google or type a URL");
         searchInputTextField.setMaxWidth(550);
         searchInputTextField.setMinHeight(40);
         searchInputTextField.setPrefWidth(550);
@@ -63,7 +63,7 @@ public class Main extends Application {
         ButtonSearch.setText("Google Search");
         ButtonSearch.getStyleClass().add("search_button");
         Button feelingLucky = new Button();
-        feelingLucky.setText("Feeling Lucky");
+        feelingLucky.setText("YouTube Search");
         feelingLucky.getStyleClass().add("search_button");
 
         // Hbox for button
@@ -77,7 +77,7 @@ public class Main extends Application {
 
         VBox.setMargin(imageView, new Insets(130, 0, 0, 0));
         VBox.setMargin(searchInputTextField, new Insets(10, 0, 0, 0));
-        VBox.setMargin(ButtonSearch, new Insets(0, 0, 120, 0));
+        VBox.setMargin(ButtonSearch, new Insets(0, 0, 0, 0));
 
         // Event handler for search button
         ButtonSearch.setOnAction(e -> showSearchResults(tabPane, searchInputTextField.getText()));
@@ -95,10 +95,8 @@ public class Main extends Application {
         String body;
         String search = URLEncoder.encode(query, StandardCharsets.UTF_8);
         try {
-            // String apiUrl =
-            // "https://www.googleapis.com/customsearch/v1?key=AIzaSyAmRBLSpWafSw-CW8G2buGGrvSvAGnKwNo&cx=017576662512468239146:omuauf_lfve&q="
-            // + search;
-            String apiUrl1 = "https://google-search103.p.rapidapi.com/search/?q=" + search + "&num=45&gl=us";
+            String apiUrl1 = "https://www.googleapis.com/customsearch/v1?key=AIzaSyAmRBLSpWafSw-CW8G2buGGrvSvAGnKwNo&cx=017576662512468239146:omuauf_lfve&q="
+                    + search;
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl1))
@@ -109,25 +107,22 @@ public class Main extends Application {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             body = response.body();
             JSONObject jsonResponse = new JSONObject(body);
-            if (jsonResponse.has("results")) {
-                JSONArray itemsArray = jsonResponse.getJSONArray("results");
+            if (jsonResponse.has("items")) {
+                JSONArray itemsArray = jsonResponse.getJSONArray("items");
+
                 int result = itemsArray.length();
                 if (itemsArray.length() > 0) {
                     String[] titles = new String[itemsArray.length()];
                     String[] links = new String[itemsArray.length()];
-                    String[] hostnames = new String[itemsArray.length()];
-                    String[] descriptions = new String[itemsArray.length()];
-
+                    String[] snippets = new String[itemsArray.length()];
                     for (int i = 0; i < itemsArray.length(); i++) {
                         JSONObject item = itemsArray.getJSONObject(i);
                         String title = item.getString("title");
                         String link = item.getString("link");
-                        String hostname = item.getString("hostname");
-                        String description = item.getString("description");
+                        String snippet = item.getString("snippet");
                         titles[i] = (title);
                         links[i] = (link);
-                        hostnames[i] = (hostname);
-                        descriptions[i] = (description);
+                        snippets[i] = (snippet);
                     }
 
                     Tab searchTab = new Tab(query);
@@ -136,21 +131,16 @@ public class Main extends Application {
                             new Background(new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
                     searchResultsContent.getChildren().add(createLabelWithWhiteText("Total results = " + result));
 
-                    if (titles.length == 0) {
-                        searchResultsContent.getChildren().add(createLabelWithWhiteText("No data found."));
-                    } else {
+                    for (int i = 0; i < titles.length; i++) {
+                        searchResultsContent.getChildren().add(createLabelWithWhiteText(titles[i]));
+                        searchResultsContent.getChildren().add(createHyperlink(links[i], links[i]));
+                        searchResultsContent.getChildren().add(createLabelWithWhiteText(snippets[i]));
+                        searchResultsContent.getChildren().add(new Label("-------------------------------"));
 
-                        for (int i = 0; i < titles.length; i++) {
-                            searchResultsContent.getChildren().add(createLabelWithWhiteText(titles[i]));
-                            searchResultsContent.getChildren().add(createHyperlink(links[i], links[i]));
-                            searchResultsContent.getChildren().add(createLabelWithWhiteText(hostnames[i]));
-                            searchResultsContent.getChildren().add(createLabelWithWhiteText(descriptions[i]));
-                            searchResultsContent.getChildren().add(new Label("-------------------------------"));
-
-                        }
                     }
 
                     searchResultsContent.setAlignment(Pos.TOP_LEFT);
+                    // !Scrollbar
                     VBox containerVBox = new VBox(searchResultsContent);
                     ScrollPane scrollPane = new ScrollPane(containerVBox);
                     scrollPane.setFitToWidth(true);
@@ -160,7 +150,16 @@ public class Main extends Application {
                     tabPane.getSelectionModel().select(searchTab);
                 }
             } else {
-                System.out.println("Not That data");
+                Tab tab404 = new Tab("404");
+                VBox notFoundContent = new VBox(20);
+                notFoundContent.setBackground(
+                        new Background(new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
+                notFoundContent.setAlignment(Pos.CENTER);
+                notFoundContent.getChildren().add(createLabelWithWhiteText("404"));
+                notFoundContent.getChildren().add(createLabelWithWhiteText("Data not found"));
+                tab404.setContent(notFoundContent);
+                tabPane.getTabs().add(tab404);
+                tabPane.getSelectionModel().select(tab404);
             }
 
         } catch (Exception e) {
@@ -170,15 +169,17 @@ public class Main extends Application {
 
     private Label createLabelWithWhiteText(String text) {
         Label label = new Label(text);
-        label.setStyle("-fx-text-fill: white;");
-        label.getStyleClass().add("search_label");
+        label.setStyle("-fx-text-fill: #2f7af2;");
+        VBox.setMargin(label, new Insets(0, 0, 0, 30));
         return label;
     }
 
     private Hyperlink createHyperlink(String url, String text) {
         Hyperlink hyperlink = new Hyperlink(text);
-        hyperlink.getStyleClass().add("href");
+        hyperlink.setStyle("-fx-text-fill: red;");
+
         hyperlink.setOnAction(e -> openWebpage(url));
+        VBox.setMargin(hyperlink, new Insets(0, 0, 0, 40));
         return hyperlink;
     }
 
