@@ -6,6 +6,11 @@ import javafx.scene.control.ScrollPane;
 import org.json.JSONObject;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -80,7 +85,15 @@ public class Main extends Application {
         VBox.setMargin(ButtonSearch, new Insets(0, 0, 0, 0));
 
         // Event handler for search button
-        ButtonSearch.setOnAction(e -> showSearchResults(tabPane, searchInputTextField.getText()));
+        ButtonSearch.setOnAction(e -> {
+            try {
+                showSearchResults(tabPane, searchInputTextField.getText());
+            } catch (FileNotFoundException e1) {
+                e1.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
 
         String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
         mainTabContent.getStylesheets().add(cssFile);
@@ -91,17 +104,22 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    private void showSearchResults(TabPane tabPane, String query) {
+    private void showSearchResults(TabPane tabPane, String query) throws FileNotFoundException, IOException {
         String body;
         String search = URLEncoder.encode(query, StandardCharsets.UTF_8);
+        Properties properties = new Properties();
+        try (InputStream input = new FileInputStream(
+                "E:\\Programming\\Java\\Search_Engine_Java\\src\\Frontend\\config.properties")) {
+            properties.load(input);
+        }
+        String key = properties.getProperty("key");
         try {
-            String apiUrl1 = "https://www.googleapis.com/customsearch/v1?key=AIzaSyAmRBLSpWafSw-CW8G2buGGrvSvAGnKwNo&cx=017576662512468239146:omuauf_lfve&q="
+            String apiUrl1 = "https://www.googleapis.com/customsearch/v1?key=" + key
+                    + "&cx=017576662512468239146:omuauf_lfve&q="
                     + search;
             HttpClient httpClient = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl1))
-                    .GET().header("X-RapidAPI-Key", "390d3da771msh870980f8383f55fp1838b9jsneee6cb7540d9")
-                    .header("X-RapidAPI-Host", "google-search103.p.rapidapi.com")
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
