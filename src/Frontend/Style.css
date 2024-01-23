@@ -15,6 +15,12 @@
     -fx-font-family: 'Open Sans', sans-serif;
 
 }
+.label {
+    -fx-font-size: 20px;
+    -fx-text-fill: #fff;
+    -fx-font-family: 'Open Sans', sans-serif;
+
+}
 
 .search_input:hover {
     -fx-border-color: #303134;
