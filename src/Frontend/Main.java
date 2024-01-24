@@ -32,6 +32,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.sql.*;
 
@@ -50,13 +51,20 @@ public class Main extends Application {
                 new Background(new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
         LoginmainTabContent.setAlignment(Pos.CENTER);
 
+        Font.loadFont(getClass().getResourceAsStream(
+                "./Fonts/OpenSans-Medium.ttf"), 12);
+        Font.loadFont(getClass().getResourceAsStream(
+                "./Fonts/Montserrat-Regular.ttf"), 12);
+
         // !To lable
 
         Label header = new Label();
         header.setText("Login");
+        header.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 22px;");
         LoginmainTabContent.getChildren().add(header);
         Label log = new Label();
         log.getStyleClass().add("label-text");
+        log.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 18px;");
         log.setText("Enter your email and password");
         LoginmainTabContent.getChildren().add(log);
 
@@ -68,6 +76,7 @@ public class Main extends Application {
         fullName.setPrefWidth(550);
         fullName.setMinHeight(40);
         fullName.setFont(new javafx.scene.text.Font(15));
+        fullName.setStyle("-fx-font-family:'Open Sans', sans-serif;");
         fullName.getStyleClass().add("search_input");
         fullName.setVisible(false);
         fullName.setManaged(false);
@@ -79,6 +88,7 @@ public class Main extends Application {
         emailTextField.setPrefWidth(550);
         emailTextField.setMinHeight(40);
         emailTextField.setFont(new javafx.scene.text.Font(15));
+        emailTextField.setStyle("-fx-font-family:'Open Sans', sans-serif;");
         emailTextField.getStyleClass().add("search_input");
         LoginmainTabContent.getChildren().addAll(emailTextField);
         TextField passwordTextField = new TextField();
@@ -87,6 +97,7 @@ public class Main extends Application {
         passwordTextField.setMinHeight(40);
         passwordTextField.setPrefWidth(550);
         passwordTextField.setMinHeight(40);
+        passwordTextField.setStyle("-fx-font-family:'Open Sans', sans-serif;");
         passwordTextField.setFont(new javafx.scene.text.Font(15));
         passwordTextField.getStyleClass().add("search_input");
         LoginmainTabContent.getChildren().addAll(passwordTextField);
@@ -95,11 +106,13 @@ public class Main extends Application {
 
         Button Login = new Button();
         Login.setText("Log In");
+        Login.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
         Login.getStyleClass().add("button");
         LoginmainTabContent.getChildren().add(Login);
         Button SignUp = new Button();
         SignUp.setVisible(false);
         SignUp.setManaged(false);
+        SignUp.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
         SignUp.setText("Sign Up");
         SignUp.getStyleClass().add("button");
         LoginmainTabContent.getChildren().add(SignUp);
@@ -188,6 +201,7 @@ public class Main extends Application {
 
                         Label userNameLabel = new Label();
                         userNameLabel.setText("Wellcome " + userName);
+                        userNameLabel.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
                         userNameLabel.getStyleClass().add("username");
                         mainTabContent.getChildren().add(userNameLabel);
                         VBox.setMargin(userNameLabel, new Insets(18, 0, 0, 1000));
@@ -206,16 +220,19 @@ public class Main extends Application {
                         searchInputTextField.setMinHeight(40);
                         searchInputTextField.setPrefWidth(550);
                         searchInputTextField.setMinHeight(40);
+                        searchInputTextField.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
                         searchInputTextField.setFont(new javafx.scene.text.Font(15));
                         searchInputTextField.getStyleClass().add("search_input");
                         mainTabContent.getChildren().addAll(searchInputTextField);
 
                         // ! Submit Button
                         Button ButtonSearch = new Button();
+                        ButtonSearch.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
                         ButtonSearch.setText("Google Search");
                         ButtonSearch.getStyleClass().add("button");
                         Button feelingLucky = new Button();
-                        feelingLucky.setText("YouTube Search");
+                        feelingLucky.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                        feelingLucky.setText("Feeling Lucky");
                         feelingLucky.getStyleClass().add("button");
 
                         // ! Hbox for button
@@ -272,9 +289,12 @@ public class Main extends Application {
         // ! Submit Button
         Button logIn = new Button();
         logIn.setText("Login");
+        logIn.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
         logIn.getStyleClass().add("search_button");
         logIn.setDisable(true);
+
         Button signUp = new Button();
+        signUp.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
         signUp.setText("Signup");
         signUp.getStyleClass().add("search_button");
 
@@ -317,7 +337,8 @@ public class Main extends Application {
         // ! Hbox for button
         HBox button = new HBox(10);
         button.getChildren().addAll(logIn, signUp);
-        HBox.setMargin(logIn, new Insets(0, 10, 153, 380));
+        HBox.setMargin(logIn, new Insets(0, 0, 150, 380));
+        // HBox.setMargin(logIn, new Insets(0, 10, 153, 380));
         LoginmainTabContent.getChildren().addAll(button);
 
         LoginmainTab.setContent(LoginmainTabContent);
@@ -325,7 +346,7 @@ public class Main extends Application {
         VBox.setMargin(emailTextField, new Insets(10, 0, 0, 0));
         VBox.setMargin(passwordTextField, new Insets(10, 0, 0, 0));
         VBox.setMargin(header, new Insets(0, 0, 50, 0));
-        VBox.setMargin(log, new Insets(0, 290, 0, 0));
+        // VBox.setMargin(log, new Insets(0, 290, 0, 0));
         String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
         LoginmainTabContent.getStylesheets().add(cssFile);
         primaryStage.setTitle("Login");
@@ -522,7 +543,7 @@ public class Main extends Application {
 
     private Label createLabelWithWhiteText(String text) {
         Label label = new Label(text);
-        label.setStyle("-fx-text-fill: #ffb600;");
+        label.setStyle("-fx-text-fill: #ffb600;-fx-font-family: 'Montserrat', sans-serif;");
         VBox.setMargin(label, new Insets(0, 0, 0, 30));
         return label;
     }

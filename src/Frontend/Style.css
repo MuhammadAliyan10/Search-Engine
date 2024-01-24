@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap');
+
 
 
 
@@ -12,7 +12,7 @@
     -fx-font-size: 14px;
     -fx-background-radius: 20px;
     -fx-border-radius: 20px;
-    -fx-font-family: 'Open Sans', sans-serif;
+    
 
 }
 
@@ -20,14 +20,14 @@
     -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-text-fill: #ffb600;
-    -fx-font-family: 'Open Sans', sans-serif;
+    
 
 }
 
 .label-text {
-    -fx-font-size: 16px;
+   -fx-font-weight: bold;
     -fx-text-fill: #ffb600;
-    -fx-font-family: 'Open Sans', sans-serif;
+    
 
 }
 
@@ -35,7 +35,7 @@
     -fx-font-size: 17px;
     -fx-font-weight: bold;
     -fx-text-fill: #ffb600;
-    -fx-font-family: 'Open Sans', sans-serif;
+    
 
 }
 
@@ -45,7 +45,7 @@
     -fx-background-radius: 20px;
     -fx-border-radius: 20px;
     -fx-font-size: 14px;
-    -fx-font-family: 'Open Sans', sans-serif;
+    
 }
 
 .button{
@@ -57,7 +57,7 @@
     -fx-font-size: 13px;
     -fx-border-width: 2px;
     -fx-border-radius: 7px;
-    -fx-font-family: 'Open Sans', sans-serif;
+    
 
 }
 .button:hover{
@@ -67,12 +67,12 @@
     -fx-text-fill: #ffb600;
     -fx-border-width: 2px;
     -fx-border-radius: 7px;
-    -fx-font-family: 'Open Sans', sans-serif;
+   
 
 }
 
 .search_button {
-    -fx-background-radius: 200px;
+    -fx-background-radius: 200px 0px 200px 0px;
     -fx-padding: 20px 100px;
     -fx-border-color: transparent;
     -fx-text-fill: white;
@@ -81,7 +81,7 @@
     -fx-font-size: 13px;
     -fx-border-width: 2px;
     -fx-border-radius: 350px;
-    -fx-font-family: 'Open Sans', sans-serif;
+    
 }
 
 .search_button:hover {
@@ -91,12 +91,12 @@
     -fx-text-fill: #ffb600;
     -fx-border-width: 2px;
     -fx-border-radius: 350px;
-    -fx-font-family: 'Open Sans', sans-serif;
+    
 }
 
 .search_label {
     -fx-font-size: 13px;
-    -fx-font-family: 'Open Sans', sans-serif;
+    
     -fx-text-fill: white;
 
 }
