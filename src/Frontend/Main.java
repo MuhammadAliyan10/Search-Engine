@@ -18,12 +18,15 @@ import java.net.http.HttpResponse;
 import javafx.scene.control.Hyperlink;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -60,7 +63,7 @@ public class Main extends Application {
 
         Label header = new Label();
         header.setText("Login");
-        header.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 22px;");
+        header.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 22px; -fx-font-weight:bold;");
         LoginmainTabContent.getChildren().add(header);
         Label log = new Label();
         log.getStyleClass().add("label-text");
@@ -199,12 +202,52 @@ public class Main extends Application {
                                         new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
                         mainTabContent.setAlignment(Pos.TOP_CENTER);
 
-                        Label userNameLabel = new Label();
-                        userNameLabel.setText("Wellcome " + userName);
-                        userNameLabel.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-                        userNameLabel.getStyleClass().add("username");
-                        mainTabContent.getChildren().add(userNameLabel);
-                        VBox.setMargin(userNameLabel, new Insets(18, 0, 0, 1000));
+                        Button showProfile = new Button();
+                        showProfile.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                        showProfile.setText("Show Profile");
+                        showProfile.getStyleClass().add("button");
+                        Button hideProfile = new Button();
+                        hideProfile.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                        hideProfile.setText("Hide Profile");
+                        hideProfile.setVisible(false);
+                        hideProfile.setManaged(false);
+                        hideProfile.getStyleClass().add("button");
+                        Label profile = new Label(userName);
+                        profile.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 13px;");
+                        profile.setVisible(false);
+                        profile.setManaged(false);
+                        Button logOut = new Button();
+                        logOut.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                        logOut.setText("LogOut");
+                        logOut.getStyleClass().add("button");
+                        logOut.setVisible(false);
+                        logOut.setManaged(false);
+
+                        showProfile.setOnAction(e -> {
+                            profile.setVisible(true);
+                            profile.setManaged(true);
+                            logOut.setVisible(true);
+                            logOut.setManaged(true);
+                            showProfile.setVisible(false);
+                            showProfile.setManaged(false);
+                            hideProfile.setVisible(true);
+                            hideProfile.setManaged(true);
+                        });
+                        hideProfile.setOnAction(e -> {
+                            profile.setVisible(false);
+                            profile.setManaged(false);
+                            logOut.setVisible(false);
+                            logOut.setManaged(false);
+                            hideProfile.setVisible(false);
+                            hideProfile.setManaged(false);
+                            showProfile.setVisible(true);
+                            showProfile.setManaged(true);
+                        });
+                        mainTabContent.getChildren().addAll(showProfile, hideProfile, profile, logOut);
+                        VBox.setMargin(showProfile, new Insets(18, 0, 0, 1020));
+                        VBox.setMargin(hideProfile, new Insets(18, 0, 0, 1020));
+                        VBox.setMargin(profile, new Insets(18, 0, 0, 1020));
+                        VBox.setMargin(logOut, new Insets(18, 0, 0, 1020));
 
                         // ! Top Google image
                         Image headingImage = new Image(getClass().getResourceAsStream("/Frontend/Images/Google.png"));
