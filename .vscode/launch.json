@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Ja",
+            "request": "launch",
+            "mainClass": "Frontend.Ja",
+            "projectName": "Search_Engine_Java_dd3f9f25"
+        },
+        {
+            "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "Frontend.Main",

@@ -157,16 +157,25 @@ public class Main extends Application {
                 alert.showAndWait();
 
             } else {
-                try {
-                    addUser(name, email, password);
-                    fullName.clear();
-                    emailTextField.clear();
-                    passwordTextField.clear();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
+                if (email.contains("@gmail.com")) {
+                    try {
+                        addUser(name, email, password);
+                        fullName.clear();
+                        emailTextField.clear();
+                        passwordTextField.clear();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
 
-                    e.printStackTrace();
+                        e.printStackTrace();
+                    }
+                } else {
+                    Alert alert = new Alert(AlertType.WARNING);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null); // No header text
+                    alert.setContentText("Please enter a valid email.");
+                    alert.showAndWait();
+
                 }
             }
 
@@ -189,108 +198,123 @@ public class Main extends Application {
                 alert.setHeaderText(null); // No header text
                 alert.setContentText("Please enter you password.");
                 alert.showAndWait();
-            } else {
+            }
 
-                try {
-                    String finalValue = authencation(email, password);
-                    if (finalValue == "Finded") {
-                        loginTabPane.getTabs().remove(LoginmainTab);
-                        Tab mainTab = new Tab("Google");
-                        mainTab.setClosable(false);
-                        VBox mainTabContent = new VBox(20);
-                        mainTabContent.setBackground(
-                                new Background(
-                                        new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
-                        mainTabContent.setAlignment(Pos.TOP_CENTER);
+            else {
+                if (email.contains("@gmail.com")) {
 
-                        Button showProfile = new Button();
-                        showProfile.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-                        showProfile.setText("Show Profile");
-                        showProfile.getStyleClass().add("button");
-                        VBox.setMargin(showProfile, new Insets(20, 0, 20, 1100));
-                        mainTabContent.getChildren().add(showProfile);
+                    try {
+                        boolean finalValue = authencation(email, password);
+                        if (finalValue) {
+                            loginTabPane.getTabs().remove(LoginmainTab);
+                            Tab mainTab = new Tab("Google");
+                            mainTab.setClosable(false);
+                            VBox mainTabContent = new VBox(20);
+                            mainTabContent.setBackground(
+                                    new Background(
+                                            new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
+                            mainTabContent.setAlignment(Pos.TOP_CENTER);
 
-                        showProfile.setOnAction(e -> {
-                            showUserProfile(userName, email, loginTabPane);
+                            Button showProfile = new Button();
+                            showProfile.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                            showProfile.setText("Show Profile");
+                            showProfile.getStyleClass().add("button");
+                            VBox.setMargin(showProfile, new Insets(20, 0, 20, 1100));
+                            mainTabContent.getChildren().add(showProfile);
 
-                        });
+                            showProfile.setOnAction(e -> {
+                                showUserProfile(userName, email, loginTabPane, mainTab, LoginmainTab);
+                                emailTextField.clear();
+                                passwordTextField.clear();
+                                fullName.clear();
 
-                        // ! Top Google image
-                        Image headingImage = new Image(getClass().getResourceAsStream("/Frontend/Images/Google.png"));
-                        ImageView imageView = new ImageView(headingImage);
-                        imageView.setFitWidth(500);
-                        imageView.setFitHeight(170);
-                        mainTabContent.getChildren().addAll(imageView);
+                            });
 
-                        // ! Input Text Field
-                        TextField searchInputTextField = new TextField();
-                        searchInputTextField.setPromptText("Search Google or type a URL");
-                        searchInputTextField.setMaxWidth(550);
-                        searchInputTextField.setMinHeight(40);
-                        searchInputTextField.setPrefWidth(550);
-                        searchInputTextField.setMinHeight(40);
-                        searchInputTextField.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-                        searchInputTextField.setFont(new javafx.scene.text.Font(15));
-                        searchInputTextField.getStyleClass().add("search_input");
-                        mainTabContent.getChildren().addAll(searchInputTextField);
+                            // ! Top Google image
+                            Image headingImage = new Image(
+                                    getClass().getResourceAsStream("/Frontend/Images/Google.png"));
+                            ImageView imageView = new ImageView(headingImage);
+                            imageView.setFitWidth(500);
+                            imageView.setFitHeight(170);
+                            mainTabContent.getChildren().addAll(imageView);
 
-                        // ! Submit Button
-                        Button ButtonSearch = new Button();
-                        ButtonSearch.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-                        ButtonSearch.setText("Google Search");
-                        ButtonSearch.getStyleClass().add("button");
-                        Button feelingLucky = new Button();
-                        feelingLucky.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-                        feelingLucky.setText("Feeling Lucky");
-                        feelingLucky.getStyleClass().add("button");
+                            // ! Input Text Field
+                            TextField searchInputTextField = new TextField();
+                            searchInputTextField.setPromptText("Search Google or type a URL");
+                            searchInputTextField.setMaxWidth(550);
+                            searchInputTextField.setMinHeight(40);
+                            searchInputTextField.setPrefWidth(550);
+                            searchInputTextField.setMinHeight(40);
+                            searchInputTextField.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                            searchInputTextField.setFont(new javafx.scene.text.Font(15));
+                            searchInputTextField.getStyleClass().add("search_input");
+                            mainTabContent.getChildren().addAll(searchInputTextField);
 
-                        // ! Hbox for button
-                        HBox button = new HBox(10);
-                        button.getChildren().addAll(ButtonSearch, feelingLucky);
-                        HBox.setMargin(ButtonSearch, new Insets(0, 10, 153, 500));
-                        mainTabContent.getChildren().addAll(button);
+                            // ! Submit Button
+                            Button ButtonSearch = new Button();
+                            ButtonSearch.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                            ButtonSearch.setText("Google Search");
+                            ButtonSearch.getStyleClass().add("button");
+                            Button feelingLucky = new Button();
+                            feelingLucky.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                            feelingLucky.setText("Feeling Lucky");
+                            feelingLucky.getStyleClass().add("button");
 
-                        mainTab.setContent(mainTabContent);
-                        loginTabPane.getTabs().add(mainTab);
+                            // ! Hbox for button
+                            HBox button = new HBox(10);
+                            button.getChildren().addAll(ButtonSearch, feelingLucky);
+                            HBox.setMargin(ButtonSearch, new Insets(0, 10, 153, 500));
+                            mainTabContent.getChildren().addAll(button);
 
-                        VBox.setMargin(imageView, new Insets(50, 0, 0, 0));
-                        VBox.setMargin(searchInputTextField, new Insets(10, 0, 0, 0));
-                        VBox.setMargin(ButtonSearch, new Insets(0, 0, 0, 0));
+                            mainTab.setContent(mainTabContent);
+                            loginTabPane.getTabs().add(mainTab);
 
-                        // ! Event handler for search button
-                        ButtonSearch.setOnAction(e -> {
-                            try {
-                                showSearchResults(loginTabPane, searchInputTextField.getText());
-                                searchInputTextField.clear();
-                            } catch (FileNotFoundException e1) {
-                                e1.printStackTrace();
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
-                        });
+                            VBox.setMargin(imageView, new Insets(50, 0, 0, 0));
+                            VBox.setMargin(searchInputTextField, new Insets(10, 0, 0, 0));
+                            VBox.setMargin(ButtonSearch, new Insets(0, 0, 0, 0));
 
-                        String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
-                        mainTabContent.getStylesheets().add(cssFile);
+                            // ! Event handler for search button
+                            ButtonSearch.setOnAction(e -> {
+                                try {
+                                    showSearchResults(loginTabPane, searchInputTextField.getText());
+                                    searchInputTextField.clear();
+                                } catch (FileNotFoundException e1) {
+                                    e1.printStackTrace();
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
+                            });
 
-                        primaryStage.setTitle("Google");
-                        primaryStage.getIcons()
-                                .add(new Image(getClass().getResourceAsStream("/Frontend/Images/logo.png")));
-                        primaryStage.setScene(new Scene(loginTabPane, 1270, 685));
-                        primaryStage.show();
+                            String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
+                            mainTabContent.getStylesheets().add(cssFile);
 
-                    } else {
-                        Alert alert = new Alert(AlertType.ERROR);
-                        alert.setTitle("No User Found");
-                        alert.setHeaderText(null); // No header text
-                        alert.setContentText("No user found. If you dont have account please sign up.");
-                        alert.showAndWait();
+                            primaryStage.setTitle("Google");
+                            primaryStage.getIcons()
+                                    .add(new Image(getClass().getResourceAsStream("/Frontend/Images/logo.png")));
+                            primaryStage.setScene(new Scene(loginTabPane, 1270, 685));
+                            primaryStage.show();
+
+                        } else {
+                            Alert alert = new Alert(AlertType.ERROR);
+                            alert.setTitle("No User Found");
+                            alert.setHeaderText(null); // No header text
+                            alert.setContentText("No user found. If you dont have account please Sign Up.");
+                            alert.showAndWait();
+                        }
+                    } catch (FileNotFoundException e) {
+
+                        e.printStackTrace();
+                    } catch (IOException e) {
+
+                        e.printStackTrace();
                     }
-                } catch (FileNotFoundException e) {
+                } else {
+                    Alert alert = new Alert(AlertType.WARNING);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please enter a valid email.");
+                    alert.showAndWait();
 
-                    e.printStackTrace();
-                } catch (IOException e) {
-
-                    e.printStackTrace();
                 }
             }
         });
@@ -429,8 +453,7 @@ public class Main extends Application {
 
     }
 
-    public void showUserProfile(String userName, String email, TabPane tabPane) {
-        System.out.println("Button clicked");
+    public void showUserProfile(String userName, String email, TabPane tabPane, Tab currentTab, Tab targetTab) {
 
         Tab profileTab = new Tab("Profile");
         VBox profileBox = new VBox(20);
@@ -443,9 +466,8 @@ public class Main extends Application {
         profileName.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 20px;");
         Label pName = new Label(userName);
         pName.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 13px;");
-
         Label profileEmail = new Label("Email : ");
-        profileName.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 20px;");
+        profileEmail.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 20px;");
         TextField pEmail = new TextField();
         pEmail.setEditable(false);
         pEmail.setText(email);
@@ -463,28 +485,16 @@ public class Main extends Application {
         updateEmail.getStyleClass().add("button");
         Button confirmUpdate = new Button();
         confirmUpdate.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-        confirmUpdate.setText("Confirmn Update");
+        confirmUpdate.setText("Confirm");
         confirmUpdate.getStyleClass().add("button");
         confirmUpdate.setVisible(false);
         confirmUpdate.setManaged(false);
-
-        updateEmail.setOnAction(e -> {
-            pEmail.setEditable(true);
-            updateEmail.setVisible(false);
-            updateEmail.setManaged(false);
-            confirmUpdate.setVisible(true);
-            confirmUpdate.setManaged(true);
-
-        });
-        confirmUpdate.setOnAction(e -> {
-            pEmail.setEditable(false);
-            updateEmail.setVisible(true);
-            updateEmail.setManaged(true);
-            confirmUpdate.setVisible(false);
-            confirmUpdate.setManaged(false);
-
-        });
-
+        Button cancelUpdate = new Button();
+        cancelUpdate.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+        cancelUpdate.setText("Cancel");
+        cancelUpdate.getStyleClass().add("button");
+        cancelUpdate.setVisible(false);
+        cancelUpdate.setManaged(false);
         Button logOut = new Button();
         logOut.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
         logOut.setText("LogOut");
@@ -493,22 +503,124 @@ public class Main extends Application {
         String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
         profileBox.getStylesheets().add(cssFile);
 
-        VBox.setMargin(profileName, new Insets(0, 700, 0, 0));
-        VBox.setMargin(pName, new Insets(0, 580, 0, 0));
-        VBox.setMargin(profileEmail, new Insets(0, 700, 0, 0));
-        VBox.setMargin(pEmail, new Insets(0, 200, 0, 0));
-        VBox.setMargin(updateEmail, new Insets(0, 0, 200, 0));
-        VBox.setMargin(confirmUpdate, new Insets(0, 0, 200, 0));
-        VBox.setMargin(logOut, new Insets(0, 0, 0, 0));
+        updateEmail.setOnAction(e -> {
+            pEmail.setEditable(true);
+            updateEmail.setVisible(false);
+            updateEmail.setManaged(false);
+            confirmUpdate.setVisible(true);
+            confirmUpdate.setManaged(true);
+            cancelUpdate.setVisible(true);
+            cancelUpdate.setManaged(true);
 
-        profileBox.getChildren().addAll(profileName, pName, profileEmail, pEmail, updateEmail,confirmUpdate, logOut);
+        });
+        confirmUpdate.setOnAction(e -> {
+            pEmail.setEditable(false);
+            updateEmail.setVisible(true);
+            updateEmail.setManaged(true);
+            confirmUpdate.setVisible(false);
+            confirmUpdate.setManaged(false);
+            cancelUpdate.setVisible(false);
+            cancelUpdate.setManaged(false);
+            String newEmail = pEmail.getText();
+            updateEmail(email, newEmail);
+
+        });
+        cancelUpdate.setOnAction(e -> {
+            pEmail.setEditable(false);
+            updateEmail.setVisible(true);
+            updateEmail.setManaged(true);
+            confirmUpdate.setVisible(false);
+            confirmUpdate.setManaged(false);
+            cancelUpdate.setVisible(false);
+            cancelUpdate.setManaged(false);
+
+        });
+        logOut.setOnAction(e -> {
+            tabPane.getTabs().remove(currentTab);
+            tabPane.getTabs().remove(profileTab);
+            tabPane.getTabs().add(targetTab);
+        });
+
+        VBox.setMargin(profileName, new Insets(50, 700, 0, 0));
+        VBox.setMargin(pName, new Insets(0, 580, 0, 0));
+        VBox.setMargin(profileEmail, new Insets(30, 735, 0, 0));
+        VBox.setMargin(pEmail, new Insets(0, 100, 0, 0));
+        VBox.setMargin(updateEmail, new Insets(0, 0, 200, 0));
+        VBox.setMargin(confirmUpdate, new Insets(0, 0, 280, 0));
+        VBox.setMargin(cancelUpdate, new Insets(0, 0, 0, 0));
+        VBox.setMargin(logOut, new Insets(0, 0, 0, 200));
+
+        profileBox.getChildren().addAll(profileName, pName, profileEmail, pEmail, updateEmail, cancelUpdate,
+                confirmUpdate, logOut);
         tabPane.getTabs().add(profileTab);
         tabPane.getSelectionModel().select(profileTab);
     }
 
-    public String authencation(String email, String password) throws FileNotFoundException, IOException {
+    public void updateEmail(String previousEmail, String newEmail) {
+        if (previousEmail.equals(newEmail)) {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Duplicated");
+            alert.setHeaderText(null);
+            alert.setContentText("It seems like you reenter your old email.");
+            alert.showAndWait();
+        } else {
+            if (newEmail.contains("@gmail.com")) {
+                Properties properties = new Properties();
+                try (InputStream input = new FileInputStream(
+                        "E:\\Programming\\Java\\Search_Engine_Java\\src\\Frontend\\config.properties")) {
+                    properties.load(input);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    return;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                String url = properties.getProperty("db.url");
+                String username = properties.getProperty("db.username");
+                String passwordE = properties.getProperty("db.password");
+
+                try (Connection con = DriverManager.getConnection(url, username, passwordE);
+                        PreparedStatement pstmt = con.prepareStatement("UPDATE users SET email = ? WHERE email = ?")) {
+                    pstmt.setString(1, newEmail);
+                    pstmt.setString(2, previousEmail);
+                    int rowsUpdated = pstmt.executeUpdate();
+
+                    if (rowsUpdated > 0) {
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Status 200");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Your email has been updated.");
+                        alert.showAndWait();
+                    } else {
+                        Alert alert = new Alert(AlertType.WARNING);
+                        alert.setTitle("Email not found");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The email to be updated was not found.");
+                        alert.showAndWait();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Database Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("An error occurred while updating the email.");
+                    alert.showAndWait();
+                }
+            } else {
+                Alert alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Validation Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please enter a valid email.");
+                alert.showAndWait();
+            }
+        }
+    }
+
+    public boolean authencation(String email, String password) throws FileNotFoundException, IOException {
         Properties properties = new Properties();
-        String finalValue = null;
+        boolean emailFinded = false;
         try (InputStream input = new FileInputStream(
                 "E:\\Programming\\Java\\Search_Engine_Java\\src\\Frontend\\config.properties")) {
             properties.load(input);
@@ -531,10 +643,11 @@ public class Main extends Application {
                 System.out.println(emaildb + ", " + passworddb + ", " + name);
 
                 if (emaildb.equals(email) && passworddb.equals(password)) {
-                    finalValue = "Finded";
+                    emailFinded = true;
                     userName = name;
+                    break;
                 } else {
-                    finalValue = "NotFinded";
+                    emailFinded = false;
                 }
 
             }
@@ -542,7 +655,7 @@ public class Main extends Application {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return finalValue;
+        return emailFinded;
 
     }
 
