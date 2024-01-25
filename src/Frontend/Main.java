@@ -40,13 +40,14 @@ import javafx.stage.Stage;
 import java.sql.*;
 
 public class Main extends Application {
-    private TabPane loginTabPane;
+    private TabPane loginTabPane, userProfile;
     private String userName = "user";
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         // ! Main tab for initial UI setup
         loginTabPane = new TabPane();
+        userProfile = new TabPane();
         Tab LoginmainTab = new Tab("Login");
         LoginmainTab.setClosable(false);
         VBox LoginmainTabContent = new VBox(20);
@@ -206,48 +207,13 @@ public class Main extends Application {
                         showProfile.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
                         showProfile.setText("Show Profile");
                         showProfile.getStyleClass().add("button");
-                        Button hideProfile = new Button();
-                        hideProfile.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-                        hideProfile.setText("Hide Profile");
-                        hideProfile.setVisible(false);
-                        hideProfile.setManaged(false);
-                        hideProfile.getStyleClass().add("button");
-                        Label profile = new Label(userName);
-                        profile.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 13px;");
-                        profile.setVisible(false);
-                        profile.setManaged(false);
-                        Button logOut = new Button();
-                        logOut.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-                        logOut.setText("LogOut");
-                        logOut.getStyleClass().add("button");
-                        logOut.setVisible(false);
-                        logOut.setManaged(false);
+                        VBox.setMargin(showProfile, new Insets(20, 0, 20, 1100));
+                        mainTabContent.getChildren().add(showProfile);
 
                         showProfile.setOnAction(e -> {
-                            profile.setVisible(true);
-                            profile.setManaged(true);
-                            logOut.setVisible(true);
-                            logOut.setManaged(true);
-                            showProfile.setVisible(false);
-                            showProfile.setManaged(false);
-                            hideProfile.setVisible(true);
-                            hideProfile.setManaged(true);
+                            showUserProfile(userName, email, loginTabPane);
+
                         });
-                        hideProfile.setOnAction(e -> {
-                            profile.setVisible(false);
-                            profile.setManaged(false);
-                            logOut.setVisible(false);
-                            logOut.setManaged(false);
-                            hideProfile.setVisible(false);
-                            hideProfile.setManaged(false);
-                            showProfile.setVisible(true);
-                            showProfile.setManaged(true);
-                        });
-                        mainTabContent.getChildren().addAll(showProfile, hideProfile, profile, logOut);
-                        VBox.setMargin(showProfile, new Insets(18, 0, 0, 1020));
-                        VBox.setMargin(hideProfile, new Insets(18, 0, 0, 1020));
-                        VBox.setMargin(profile, new Insets(18, 0, 0, 1020));
-                        VBox.setMargin(logOut, new Insets(18, 0, 0, 1020));
 
                         // ! Top Google image
                         Image headingImage = new Image(getClass().getResourceAsStream("/Frontend/Images/Google.png"));
@@ -463,6 +429,83 @@ public class Main extends Application {
 
     }
 
+    public void showUserProfile(String userName, String email, TabPane tabPane) {
+        System.out.println("Button clicked");
+
+        Tab profileTab = new Tab("Profile");
+        VBox profileBox = new VBox(20);
+        profileBox.setBackground(new Background(
+                new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
+        profileBox.setAlignment(Pos.CENTER);
+        profileTab.setContent(profileBox);
+
+        Label profileName = new Label("Full Name: ");
+        profileName.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 20px;");
+        Label pName = new Label(userName);
+        pName.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 13px;");
+
+        Label profileEmail = new Label("Email : ");
+        profileName.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 20px;");
+        TextField pEmail = new TextField();
+        pEmail.setEditable(false);
+        pEmail.setText(email);
+        pEmail.setMaxWidth(550);
+        pEmail.setMinHeight(40);
+        pEmail.setPrefWidth(550);
+        pEmail.setMinHeight(40);
+        pEmail.setFont(new javafx.scene.text.Font(15));
+        pEmail.setStyle("-fx-font-family:'Open Sans', sans-serif;");
+        pEmail.getStyleClass().add("search_input");
+        Button updateEmail = new Button();
+        updateEmail.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+        updateEmail.setText("Update Email");
+        updateEmail.getStyleClass().add("button");
+        updateEmail.getStyleClass().add("button");
+        Button confirmUpdate = new Button();
+        confirmUpdate.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+        confirmUpdate.setText("Confirmn Update");
+        confirmUpdate.getStyleClass().add("button");
+        confirmUpdate.setVisible(false);
+        confirmUpdate.setManaged(false);
+
+        updateEmail.setOnAction(e -> {
+            pEmail.setEditable(true);
+            updateEmail.setVisible(false);
+            updateEmail.setManaged(false);
+            confirmUpdate.setVisible(true);
+            confirmUpdate.setManaged(true);
+
+        });
+        confirmUpdate.setOnAction(e -> {
+            pEmail.setEditable(false);
+            updateEmail.setVisible(true);
+            updateEmail.setManaged(true);
+            confirmUpdate.setVisible(false);
+            confirmUpdate.setManaged(false);
+
+        });
+
+        Button logOut = new Button();
+        logOut.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+        logOut.setText("LogOut");
+        logOut.getStyleClass().add("button");
+        logOut.getStyleClass().add("button");
+        String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
+        profileBox.getStylesheets().add(cssFile);
+
+        VBox.setMargin(profileName, new Insets(0, 700, 0, 0));
+        VBox.setMargin(pName, new Insets(0, 580, 0, 0));
+        VBox.setMargin(profileEmail, new Insets(0, 700, 0, 0));
+        VBox.setMargin(pEmail, new Insets(0, 200, 0, 0));
+        VBox.setMargin(updateEmail, new Insets(0, 0, 200, 0));
+        VBox.setMargin(confirmUpdate, new Insets(0, 0, 200, 0));
+        VBox.setMargin(logOut, new Insets(0, 0, 0, 0));
+
+        profileBox.getChildren().addAll(profileName, pName, profileEmail, pEmail, updateEmail,confirmUpdate, logOut);
+        tabPane.getTabs().add(profileTab);
+        tabPane.getSelectionModel().select(profileTab);
+    }
+
     public String authencation(String email, String password) throws FileNotFoundException, IOException {
         Properties properties = new Properties();
         String finalValue = null;
@@ -565,6 +608,7 @@ public class Main extends Application {
                     searchTab.setContent(scrollPane);
                     loginTabPane.getTabs().add(searchTab);
                     loginTabPane.getSelectionModel().select(searchTab);
+
                 }
             } else {
                 Tab tab404 = new Tab("404");
