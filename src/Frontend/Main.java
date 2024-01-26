@@ -25,6 +25,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -94,7 +95,7 @@ public class Main extends Application {
         emailTextField.setStyle("-fx-font-family:'Open Sans', sans-serif;");
         emailTextField.getStyleClass().add("search_input");
         LoginmainTabContent.getChildren().addAll(emailTextField);
-        TextField passwordTextField = new TextField();
+        PasswordField passwordTextField = new PasswordField();
         passwordTextField.setPromptText("Enter your password");
         passwordTextField.setMaxWidth(550);
         passwordTextField.setMinHeight(40);
