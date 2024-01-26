@@ -18,15 +18,12 @@ import java.net.http.HttpResponse;
 import javafx.scene.control.Hyperlink;
 import javafx.application.Application;
 import javafx.application.HostServices;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -62,9 +59,11 @@ public class Main extends Application {
 
         // !To lable
 
-        Label header = new Label();
-        header.setText("Login");
-        header.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 22px; -fx-font-weight:bold;");
+        Button header = new Button();
+        header.setText("LogIn Page");
+        header.setStyle(
+                "-fx-font-family: 'Montserrat', sans-serif; -fx-background-color: #ffb600;-fx-border-color: #ffb600; -fx-text-fill: #fff;");
+        header.getStyleClass().add("search_button");
         LoginmainTabContent.getChildren().add(header);
         Label log = new Label();
         log.getStyleClass().add("label-text");
@@ -319,7 +318,6 @@ public class Main extends Application {
             }
         });
 
-        // ! Submit Button
         Button logIn = new Button();
         logIn.setText("Login");
         logIn.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
@@ -329,13 +327,15 @@ public class Main extends Application {
         Button signUp = new Button();
         signUp.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
         signUp.setText("Signup");
-        signUp.getStyleClass().add("search_button");
+        signUp.getStyleClass().add("search_buttonL");
 
         // !Hide and display
         logIn.setOnAction(event -> {
+            header.getStyleClass().remove("search_buttonL");
+            header.getStyleClass().add("search_button");
             logIn.setDisable(true);
             signUp.setDisable(false);
-            header.setText("Log In");
+            header.setText("LogIn Page");
             fullName.setVisible(false);
             fullName.setManaged(false);
             log.setVisible(true);
@@ -350,9 +350,11 @@ public class Main extends Application {
         });
 
         signUp.setOnAction(event -> {
+            header.getStyleClass().remove("search_button");
+            header.getStyleClass().add("search_buttonL");
             signUp.setDisable(true);
             logIn.setDisable(false);
-            header.setText("Sign Up");
+            header.setText("SignUp Page");
             fullName.setVisible(true);
             fullName.setManaged(true);
             log.setVisible(false);
@@ -370,15 +372,14 @@ public class Main extends Application {
         // ! Hbox for button
         HBox button = new HBox(10);
         button.getChildren().addAll(logIn, signUp);
-        HBox.setMargin(logIn, new Insets(0, 0, 150, 380));
-        // HBox.setMargin(logIn, new Insets(0, 10, 153, 380));
+        HBox.setMargin(logIn, new Insets(0, 0, 150, 385));
         LoginmainTabContent.getChildren().addAll(button);
 
         LoginmainTab.setContent(LoginmainTabContent);
         loginTabPane.getTabs().add(LoginmainTab);
         VBox.setMargin(emailTextField, new Insets(10, 0, 0, 0));
         VBox.setMargin(passwordTextField, new Insets(10, 0, 0, 0));
-        VBox.setMargin(header, new Insets(0, 0, 50, 0));
+        VBox.setMargin(header, new Insets(80, 0, 50, 0));
         // VBox.setMargin(log, new Insets(0, 290, 0, 0));
         String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
         LoginmainTabContent.getStylesheets().add(cssFile);
@@ -465,7 +466,7 @@ public class Main extends Application {
         Label profileName = new Label("Full Name: ");
         profileName.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 20px;");
         Label pName = new Label(userName);
-        pName.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 13px;");
+        pName.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 19px; -fx-text-fill: #fff;");
         Label profileEmail = new Label("Email : ");
         profileEmail.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 20px;");
         TextField pEmail = new TextField();
@@ -479,27 +480,34 @@ public class Main extends Application {
         pEmail.setStyle("-fx-font-family:'Open Sans', sans-serif;");
         pEmail.getStyleClass().add("search_input");
         Button updateEmail = new Button();
-        updateEmail.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+        updateEmail.setStyle("-fx-font-family: 'Montserrat', sans-serif");
         updateEmail.setText("Update Email");
         updateEmail.getStyleClass().add("button");
         updateEmail.getStyleClass().add("button");
         Button confirmUpdate = new Button();
-        confirmUpdate.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+        confirmUpdate.setStyle("-fx-font-family: 'Montserrat', sans-serif");
         confirmUpdate.setText("Confirm");
         confirmUpdate.getStyleClass().add("button");
         confirmUpdate.setVisible(false);
         confirmUpdate.setManaged(false);
         Button cancelUpdate = new Button();
-        cancelUpdate.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+        cancelUpdate.setStyle("-fx-font-family: 'Montserrat', sans-serif");
         cancelUpdate.setText("Cancel");
         cancelUpdate.getStyleClass().add("button");
         cancelUpdate.setVisible(false);
         cancelUpdate.setManaged(false);
+        HBox button = new HBox(10);
+        button.getChildren().addAll(cancelUpdate, confirmUpdate);
+        HBox.setMargin(cancelUpdate, new Insets(0, 10, 200, 650));
         Button logOut = new Button();
-        logOut.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+        logOut.setStyle("-fx-font-family: 'Montserrat', sans-serif");
         logOut.setText("LogOut");
         logOut.getStyleClass().add("button");
-        logOut.getStyleClass().add("button");
+        Button deleteAccount = new Button();
+        deleteAccount.setStyle("-fx-font-family: 'Montserrat', sans-serif");
+        deleteAccount.setText("Delete Account");
+        deleteAccount.getStyleClass().add("button");
+
         String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
         profileBox.getStylesheets().add(cssFile);
 
@@ -540,20 +548,67 @@ public class Main extends Application {
             tabPane.getTabs().remove(profileTab);
             tabPane.getTabs().add(targetTab);
         });
+        deleteAccount.setOnAction(e -> {
+            deleteAccount(email);
+            tabPane.getTabs().remove(currentTab);
+            tabPane.getTabs().remove(profileTab);
+            tabPane.getTabs().add(targetTab);
+        });
 
         VBox.setMargin(profileName, new Insets(50, 700, 0, 0));
-        VBox.setMargin(pName, new Insets(0, 580, 0, 0));
-        VBox.setMargin(profileEmail, new Insets(30, 735, 0, 0));
+        VBox.setMargin(pName, new Insets(0, 350, 0, 50));
+        VBox.setMargin(profileEmail, new Insets(0, 735, 0, 0));
         VBox.setMargin(pEmail, new Insets(0, 100, 0, 0));
-        VBox.setMargin(updateEmail, new Insets(0, 0, 200, 0));
-        VBox.setMargin(confirmUpdate, new Insets(0, 0, 280, 0));
-        VBox.setMargin(cancelUpdate, new Insets(0, 0, 0, 0));
-        VBox.setMargin(logOut, new Insets(0, 0, 0, 200));
+        VBox.setMargin(updateEmail, new Insets(0, 0, 0, 230));
+        VBox.setMargin(logOut, new Insets(20, 20, 0, 1100));
+        VBox.setMargin(deleteAccount, new Insets(60, 20, 0, 1100));
 
-        profileBox.getChildren().addAll(profileName, pName, profileEmail, pEmail, updateEmail, cancelUpdate,
-                confirmUpdate, logOut);
+        profileBox.getChildren().addAll(logOut, profileName, pName, profileEmail, pEmail, updateEmail, button,
+                deleteAccount);
         tabPane.getTabs().add(profileTab);
         tabPane.getSelectionModel().select(profileTab);
+    }
+
+    public void deleteAccount(String email) {
+        Properties properties = new Properties();
+        try (InputStream input = new FileInputStream(
+                "E:\\Programming\\Java\\Search_Engine_Java\\src\\Frontend\\config.properties")) {
+            properties.load(input);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        String url = properties.getProperty("db.url");
+        String username = properties.getProperty("db.username");
+        String password = properties.getProperty("db.password");
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                PreparedStatement preparedStatement = con.prepareStatement("DELETE FROM users WHERE email = ?")) {
+            preparedStatement.setString(1, email);
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Status 200");
+                alert.setHeaderText(null);
+                alert.setContentText("Your Account deleted successfully.");
+                alert.showAndWait();
+            } else {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("DataBase Erro");
+                alert.setHeaderText(null);
+                alert.setContentText("Failed to delete account.Please try again later. ");
+                alert.showAndWait();
+            }
+            System.out.println(rowsAffected + " row(s) deleted successfully.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void updateEmail(String previousEmail, String newEmail) {
@@ -580,33 +635,69 @@ public class Main extends Application {
                 String url = properties.getProperty("db.url");
                 String username = properties.getProperty("db.username");
                 String passwordE = properties.getProperty("db.password");
+                boolean emailFinded = false;
 
-                try (Connection con = DriverManager.getConnection(url, username, passwordE);
-                        PreparedStatement pstmt = con.prepareStatement("UPDATE users SET email = ? WHERE email = ?")) {
-                    pstmt.setString(1, newEmail);
-                    pstmt.setString(2, previousEmail);
-                    int rowsUpdated = pstmt.executeUpdate();
+                try (
+                        Connection con = DriverManager.getConnection(url, username, passwordE);
+                        Statement stmt = con.createStatement()) {
 
-                    if (rowsUpdated > 0) {
-                        Alert alert = new Alert(AlertType.INFORMATION);
-                        alert.setTitle("Status 200");
+                    String strSelect = "select name, email, password from users";
+                    ResultSet rset = stmt.executeQuery(strSelect);
+
+                    while (rset.next()) {
+                        String name = rset.getString("name");
+                        String emaildb = rset.getString("email");
+                        String passworddb = rset.getString("password");
+                        System.out.println(emaildb + ", " + passworddb + ", " + name);
+
+                        if (emaildb.equals(newEmail)) {
+                            emailFinded = true;
+                            break;
+                        } else {
+                            emailFinded = false;
+                        }
+
+                    }
+
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                if (emailFinded) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Dublicate");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The user with same email exist. Please chose a different email.");
+                    alert.showAndWait();
+
+                } else {
+                    try (Connection con = DriverManager.getConnection(url, username, passwordE);
+                            PreparedStatement pstmt = con
+                                    .prepareStatement("UPDATE users SET email = ? WHERE email = ?")) {
+                        pstmt.setString(1, newEmail);
+                        pstmt.setString(2, previousEmail);
+                        int rowsUpdated = pstmt.executeUpdate();
+
+                        if (rowsUpdated > 0) {
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("Status 200");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Your email has been updated.");
+                            alert.showAndWait();
+                        } else {
+                            Alert alert = new Alert(AlertType.WARNING);
+                            alert.setTitle("Email not found");
+                            alert.setHeaderText(null);
+                            alert.setContentText("The email to be updated was not found.");
+                            alert.showAndWait();
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        Alert alert = new Alert(AlertType.ERROR);
+                        alert.setTitle("Database Error");
                         alert.setHeaderText(null);
-                        alert.setContentText("Your email has been updated.");
-                        alert.showAndWait();
-                    } else {
-                        Alert alert = new Alert(AlertType.WARNING);
-                        alert.setTitle("Email not found");
-                        alert.setHeaderText(null);
-                        alert.setContentText("The email to be updated was not found.");
+                        alert.setContentText("An error occurred while updating the email.");
                         alert.showAndWait();
                     }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Database Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("An error occurred while updating the email.");
-                    alert.showAndWait();
                 }
             } else {
                 Alert alert = new Alert(AlertType.WARNING);
