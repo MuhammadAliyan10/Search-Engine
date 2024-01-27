@@ -38,14 +38,14 @@ import javafx.stage.Stage;
 import java.sql.*;
 
 public class Main extends Application {
-    private TabPane loginTabPane, userProfile;
+    private TabPane loginTabPane;
     private String userName;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         // ! Main tab for initial UI setup
         loginTabPane = new TabPane();
-        userProfile = new TabPane();
+        new TabPane();
         Tab LoginmainTab = new Tab("Login");
         LoginmainTab.setClosable(false);
         VBox LoginmainTabContent = new VBox(20);
