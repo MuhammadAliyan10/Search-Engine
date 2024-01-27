@@ -52,14 +52,12 @@ public class Main extends Application {
         LoginmainTabContent.setBackground(
                 new Background(new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
         LoginmainTabContent.setAlignment(Pos.CENTER);
-
         Font.loadFont(getClass().getResourceAsStream(
                 "./Fonts/OpenSans-Medium.ttf"), 12);
         Font.loadFont(getClass().getResourceAsStream(
                 "./Fonts/Montserrat-Regular.ttf"), 12);
 
         // !To lable
-
         Button header = new Button();
         header.setText("LogIn Page");
         header.setStyle(
@@ -107,7 +105,6 @@ public class Main extends Application {
         LoginmainTabContent.getChildren().addAll(passwordTextField);
 
         // !Buttons
-
         Button Login = new Button();
         Login.setText("Log In");
         Login.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
@@ -120,8 +117,6 @@ public class Main extends Application {
         SignUp.setText("Sign Up");
         SignUp.getStyleClass().add("button");
         LoginmainTabContent.getChildren().add(SignUp);
-
-        // ! OnClick handler
 
         // *Sign Up
         SignUp.setOnAction(event -> {
@@ -155,7 +150,6 @@ public class Main extends Application {
                 alert.setHeaderText(null);
                 alert.setContentText("Password must be minimum of 8 character.");
                 alert.showAndWait();
-
             } else {
                 if (email.contains("@gmail.com")) {
                     try {
@@ -198,9 +192,7 @@ public class Main extends Application {
                 alert.setHeaderText(null); // No header text
                 alert.setContentText("Password is required.");
                 alert.showAndWait();
-            }
-
-            else {
+            } else {
                 if (email.contains("@gmail.com")) {
                     try {
                         boolean finalValue = authencation(email, password);
@@ -226,7 +218,6 @@ public class Main extends Application {
                                 emailTextField.clear();
                                 passwordTextField.clear();
                                 fullName.clear();
-
                             });
 
                             // ! Top Google image
@@ -267,7 +258,6 @@ public class Main extends Application {
 
                             mainTab.setContent(mainTabContent);
                             loginTabPane.getTabs().add(mainTab);
-
                             VBox.setMargin(imageView, new Insets(50, 0, 0, 0));
                             VBox.setMargin(searchInputTextField, new Insets(10, 0, 0, 0));
                             VBox.setMargin(ButtonSearch, new Insets(0, 0, 0, 0));
@@ -286,13 +276,11 @@ public class Main extends Application {
 
                             String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
                             mainTabContent.getStylesheets().add(cssFile);
-
                             primaryStage.setTitle("Google");
                             primaryStage.getIcons()
                                     .add(new Image(getClass().getResourceAsStream("/Frontend/Images/logo.png")));
                             primaryStage.setScene(new Scene(loginTabPane, 1270, 685));
                             primaryStage.show();
-
                         } else {
                             Alert alert = new Alert(AlertType.ERROR);
                             alert.setTitle("No User Found");
@@ -313,7 +301,6 @@ public class Main extends Application {
                     alert.setHeaderText(null);
                     alert.setContentText("Please enter a valid email.");
                     alert.showAndWait();
-
                 }
             }
         });
@@ -323,7 +310,6 @@ public class Main extends Application {
         logIn.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
         logIn.getStyleClass().add("search_button");
         logIn.setDisable(true);
-
         Button signUp = new Button();
         signUp.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
         signUp.setText("Signup");
@@ -366,7 +352,6 @@ public class Main extends Application {
             fullName.clear();
             emailTextField.clear();
             passwordTextField.clear();
-
         });
 
         // ! Hbox for button
@@ -380,10 +365,11 @@ public class Main extends Application {
         VBox.setMargin(emailTextField, new Insets(10, 0, 0, 0));
         VBox.setMargin(passwordTextField, new Insets(10, 0, 0, 0));
         VBox.setMargin(header, new Insets(80, 0, 50, 0));
-        // VBox.setMargin(log, new Insets(0, 290, 0, 0));
         String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
         LoginmainTabContent.getStylesheets().add(cssFile);
         primaryStage.setTitle("Login");
+        primaryStage.getIcons()
+                .add(new Image(getClass().getResourceAsStream("/Frontend/Images/logo.png")));
         primaryStage.setScene(new Scene(loginTabPane, 1270, 685));
         primaryStage.show();
     }
@@ -417,7 +403,6 @@ public class Main extends Application {
                 alert.setHeaderText(null);
                 alert.setContentText("This email hase already an account");
                 alert.showAndWait();
-
             } else {
                 String added = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
                 try (PreparedStatement pstmt = con.prepareStatement(added)) {
@@ -426,16 +411,13 @@ public class Main extends Application {
                     pstmt.setString(3, password);
 
                     int rowsAffected = pstmt.executeUpdate();
-
                     if (rowsAffected > 0) {
-
                         Alert alert = new Alert(AlertType.INFORMATION);
                         alert.setTitle("New User");
                         alert.setHeaderText(null);
                         alert.setContentText("You signed up successfully. Log in to continue");
                         alert.showAndWait();
                     } else {
-
                         Alert alert = new Alert(AlertType.ERROR);
                         alert.setTitle("Error");
                         alert.setHeaderText(null);
@@ -445,18 +427,14 @@ public class Main extends Application {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-
             }
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
     public void showUserProfile(String userName, String email, String Password, TabPane tabPane, Tab currentTab,
             Tab targetTab) {
-
         Tab profileTab = new Tab("Profile");
         VBox profileBox = new VBox(20);
         profileBox.setBackground(new Background(
@@ -744,7 +722,6 @@ public class Main extends Application {
             String username = properties.getProperty("db.username");
             String passwordE = properties.getProperty("db.password");
             boolean emailFinded = false;
-
             try (
                     Connection con = DriverManager.getConnection(url, username, passwordE);
                     Statement stmt = con.createStatement()) {
@@ -756,7 +733,6 @@ public class Main extends Application {
                     String name = rset.getString("name");
                     String emaildb = rset.getString("email");
                     System.out.println(name);
-
                     if (emaildb.equals(userEmail)) {
                         emailFinded = true;
                         break;
@@ -892,11 +868,9 @@ public class Main extends Application {
                         alert.setContentText("An error occurred while updating the email.");
                         alert.showAndWait();
                     }
-
                 }
             }
         }
-
     }
 
     public void updateEmail(String previousEmail, String newEmail) {
@@ -1009,7 +983,6 @@ public class Main extends Application {
             e.printStackTrace();
             return;
         }
-
         String url = properties.getProperty("db.url");
         String username = properties.getProperty("db.username");
         String password = properties.getProperty("db.password");
@@ -1045,7 +1018,6 @@ public class Main extends Application {
                 "E:\\Programming\\Java\\Search_Engine_Java\\src\\Frontend\\config.properties")) {
             properties.load(input);
         }
-
         String url = properties.getProperty("db.url");
         String username = properties.getProperty("db.username");
         String passwordE = properties.getProperty("db.password");
@@ -1061,7 +1033,6 @@ public class Main extends Application {
                 String emaildb = rset.getString("email");
                 String passworddb = rset.getString("password");
                 System.out.println(emaildb + ", " + passworddb + ", " + name);
-
                 if (emaildb.equals(email) && passworddb.equals(password)) {
                     emailFinded = true;
                     userName = name;
@@ -1076,7 +1047,6 @@ public class Main extends Application {
             System.out.println(e.getMessage());
         }
         return emailFinded;
-
     }
 
     private void showSearchResults(TabPane tabPane, String query) throws FileNotFoundException, IOException {
@@ -1096,7 +1066,6 @@ public class Main extends Application {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl1))
                     .build();
-
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             body = response.body();
             JSONObject jsonResponse = new JSONObject(body);
@@ -1117,7 +1086,6 @@ public class Main extends Application {
                         links[i] = (link);
                         snippets[i] = (snippet);
                     }
-
                     Tab searchTab = new Tab(query);
                     VBox searchResultsContent = new VBox(20);
                     searchResultsContent.setBackground(
@@ -1131,7 +1099,6 @@ public class Main extends Application {
                         searchResultsContent.getChildren().add(new Label("-------------------------------"));
 
                     }
-
                     searchResultsContent.setAlignment(Pos.TOP_LEFT);
                     // !Scrollbar
                     VBox containerVBox = new VBox(searchResultsContent);
@@ -1141,7 +1108,6 @@ public class Main extends Application {
                     searchTab.setContent(scrollPane);
                     loginTabPane.getTabs().add(searchTab);
                     loginTabPane.getSelectionModel().select(searchTab);
-
                 }
             } else {
                 Tab tab404 = new Tab("404");

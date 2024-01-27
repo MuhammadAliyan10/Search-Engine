@@ -7,30 +7,23 @@
     -fx-background-radius: 20px;
     -fx-border-radius: 20px;
 
-
 }
 
 .label {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-text-fill: #ffb600;
-
-
 }
 
 .label-text {
     -fx-font-weight: bold;
     -fx-text-fill: #ffb600;
-
-
 }
 
 .username {
     -fx-font-size: 17px;
     -fx-font-weight: bold;
     -fx-text-fill: #ffb600;
-
-
 }
 
 .search_input:hover {
@@ -39,7 +32,6 @@
     -fx-background-radius: 20px;
     -fx-border-radius: 20px;
     -fx-font-size: 14px;
-
 }
 
 .button {
@@ -52,8 +44,6 @@
     -fx-border-width: 2px;
     -fx-border-radius: 7px;
     -fx-transition: all 0.3s ease;
-
-
 }
 
 .button:hover {
@@ -64,7 +54,6 @@
     -fx-border-width: 2px;
     -fx-border-radius: 7px;
     -fx-transition: all 0.5s ease;
-
 }
 
 .search_button {
@@ -114,10 +103,6 @@
     -fx-border-width: 2px;
     -fx-border-radius: 0px 200px 0px 200px;
 }
-
-
-
-
 
 .search_label {
     -fx-font-size: 13px;
