@@ -39,7 +39,7 @@ import java.sql.*;
 
 public class Main extends Application {
     private TabPane loginTabPane, userProfile;
-    private String userName = "user";
+    private String userName;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -132,21 +132,21 @@ public class Main extends Application {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Empty Field");
                 alert.setHeaderText(null);
-                alert.setContentText("Please enter you full name.");
+                alert.setContentText("Name is required.");
                 alert.showAndWait();
 
             } else if (email.isEmpty()) {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Empty Field");
                 alert.setHeaderText(null);
-                alert.setContentText("Please enter you email address.");
+                alert.setContentText("Email is required.");
                 alert.showAndWait();
 
             } else if (password.isEmpty()) {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Empty Field");
                 alert.setHeaderText(null);
-                alert.setContentText("Please enter you password.");
+                alert.setContentText("Password is required.");
                 alert.showAndWait();
 
             } else if (password.length() < 8) {
@@ -189,20 +189,19 @@ public class Main extends Application {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Empty Field");
                 alert.setHeaderText(null); // No header text
-                alert.setContentText("Please enter your email address.");
+                alert.setContentText("Email is required.");
                 alert.showAndWait();
 
             } else if (password.isEmpty()) {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Empty Field");
                 alert.setHeaderText(null); // No header text
-                alert.setContentText("Please enter you password.");
+                alert.setContentText("Password is required.");
                 alert.showAndWait();
             }
 
             else {
                 if (email.contains("@gmail.com")) {
-
                     try {
                         boolean finalValue = authencation(email, password);
                         if (finalValue) {
@@ -900,48 +899,6 @@ public class Main extends Application {
 
     }
 
-    public void deleteAccount(String email) {
-        Properties properties = new Properties();
-        try (InputStream input = new FileInputStream(
-                "E:\\Programming\\Java\\Search_Engine_Java\\src\\Frontend\\config.properties")) {
-            properties.load(input);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        String url = properties.getProperty("db.url");
-        String username = properties.getProperty("db.username");
-        String password = properties.getProperty("db.password");
-
-        try (Connection con = DriverManager.getConnection(url, username, password);
-                PreparedStatement preparedStatement = con.prepareStatement("DELETE FROM users WHERE email = ?")) {
-            preparedStatement.setString(1, email);
-            int rowsAffected = preparedStatement.executeUpdate();
-
-            if (rowsAffected > 0) {
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Status 200");
-                alert.setHeaderText(null);
-                alert.setContentText("Your Account deleted successfully.");
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("DataBase Erro");
-                alert.setHeaderText(null);
-                alert.setContentText("Failed to delete account.Please try again later. ");
-                alert.showAndWait();
-            }
-            System.out.println(rowsAffected + " row(s) deleted successfully.");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void updateEmail(String previousEmail, String newEmail) {
         if (previousEmail.equals(newEmail)) {
             Alert alert = new Alert(AlertType.WARNING);
@@ -1037,6 +994,47 @@ public class Main extends Application {
                 alert.setContentText("Please enter a valid email.");
                 alert.showAndWait();
             }
+        }
+    }
+
+    public void deleteAccount(String email) {
+        Properties properties = new Properties();
+        try (InputStream input = new FileInputStream(
+                "E:\\Programming\\Java\\Search_Engine_Java\\src\\Frontend\\config.properties")) {
+            properties.load(input);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        String url = properties.getProperty("db.url");
+        String username = properties.getProperty("db.username");
+        String password = properties.getProperty("db.password");
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                PreparedStatement preparedStatement = con.prepareStatement("DELETE FROM users WHERE email = ?")) {
+            preparedStatement.setString(1, email);
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Status 200");
+                alert.setHeaderText(null);
+                alert.setContentText("Your Account deleted successfully.");
+                alert.showAndWait();
+            } else {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("DataBase Erro");
+                alert.setHeaderText(null);
+                alert.setContentText("Failed to delete account.Please try again later. ");
+                alert.showAndWait();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
