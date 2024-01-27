@@ -223,7 +223,7 @@ public class Main extends Application {
                             mainTabContent.getChildren().add(showProfile);
 
                             showProfile.setOnAction(e -> {
-                                showUserProfile(userName, email, loginTabPane, mainTab, LoginmainTab);
+                                showUserProfile(userName, email, password, loginTabPane, mainTab, LoginmainTab);
                                 emailTextField.clear();
                                 passwordTextField.clear();
                                 fullName.clear();
@@ -455,7 +455,8 @@ public class Main extends Application {
 
     }
 
-    public void showUserProfile(String userName, String email, TabPane tabPane, Tab currentTab, Tab targetTab) {
+    public void showUserProfile(String userName, String email, String Password, TabPane tabPane, Tab currentTab,
+            Tab targetTab) {
 
         Tab profileTab = new Tab("Profile");
         VBox profileBox = new VBox(20);
@@ -463,11 +464,76 @@ public class Main extends Application {
                 new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
         profileBox.setAlignment(Pos.CENTER);
         profileTab.setContent(profileBox);
-
+        // !Name
         Label profileName = new Label("Full Name: ");
         profileName.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 20px;");
-        Label pName = new Label(userName);
-        pName.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 19px; -fx-text-fill: #fff;");
+        TextField pName = new TextField();
+        pName.setEditable(false);
+        pName.setText(userName);
+        pName.setMaxWidth(550);
+        pName.setMinHeight(40);
+        pName.setPrefWidth(550);
+        pName.setMinHeight(40);
+        pName.setFont(new javafx.scene.text.Font(15));
+        pName.setStyle("-fx-font-family:'Open Sans', sans-serif;");
+        pName.getStyleClass().add("search_input");
+        // ! Name Button
+        Button updateName = new Button();
+        updateName.setStyle("-fx-font-family: 'Montserrat', sans-serif");
+        updateName.setText("Update Name");
+        updateName.getStyleClass().add("button");
+        updateName.getStyleClass().add("button");
+        Button confirmUpdateName = new Button();
+        confirmUpdateName.setStyle("-fx-font-family: 'Montserrat', sans-serif");
+        confirmUpdateName.setText("Confirm");
+        confirmUpdateName.getStyleClass().add("button");
+        confirmUpdateName.setVisible(false);
+        confirmUpdateName.setManaged(false);
+        Button cancelUpdateName = new Button();
+        cancelUpdateName.setStyle("-fx-font-family: 'Montserrat', sans-serif");
+        cancelUpdateName.setText("Cancel");
+        cancelUpdateName.getStyleClass().add("button");
+        cancelUpdateName.setVisible(false);
+        cancelUpdateName.setManaged(false);
+        HBox buttonName = new HBox(10);
+        buttonName.getChildren().addAll(cancelUpdateName, confirmUpdateName);
+        HBox.setMargin(cancelUpdateName, new Insets(0, 10, 0, 650));
+
+        // !Button Function
+        updateName.setOnAction(e -> {
+            pName.setEditable(true);
+            updateName.setVisible(false);
+            updateName.setManaged(false);
+            confirmUpdateName.setVisible(true);
+            confirmUpdateName.setManaged(true);
+            cancelUpdateName.setVisible(true);
+            cancelUpdateName.setManaged(true);
+
+        });
+        confirmUpdateName.setOnAction(e -> {
+            pName.setEditable(false);
+            updateName.setVisible(true);
+            updateName.setManaged(true);
+            confirmUpdateName.setVisible(false);
+            confirmUpdateName.setManaged(false);
+            cancelUpdateName.setVisible(false);
+            cancelUpdateName.setManaged(false);
+            String newName = pName.getText();
+            updateName(userName, newName, email);
+
+        });
+        cancelUpdateName.setOnAction(e -> {
+            pName.setEditable(false);
+            updateName.setVisible(true);
+            updateName.setManaged(true);
+            confirmUpdateName.setVisible(false);
+            confirmUpdateName.setManaged(false);
+            cancelUpdateName.setVisible(false);
+            cancelUpdateName.setManaged(false);
+
+        });
+
+        // !Email
         Label profileEmail = new Label("Email : ");
         profileEmail.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 20px;");
         TextField pEmail = new TextField();
@@ -480,6 +546,7 @@ public class Main extends Application {
         pEmail.setFont(new javafx.scene.text.Font(15));
         pEmail.setStyle("-fx-font-family:'Open Sans', sans-serif;");
         pEmail.getStyleClass().add("search_input");
+        // !Email Button Updates
         Button updateEmail = new Button();
         updateEmail.setStyle("-fx-font-family: 'Montserrat', sans-serif");
         updateEmail.setText("Update Email");
@@ -499,18 +566,7 @@ public class Main extends Application {
         cancelUpdate.setManaged(false);
         HBox button = new HBox(10);
         button.getChildren().addAll(cancelUpdate, confirmUpdate);
-        HBox.setMargin(cancelUpdate, new Insets(0, 10, 200, 650));
-        Button logOut = new Button();
-        logOut.setStyle("-fx-font-family: 'Montserrat', sans-serif");
-        logOut.setText("LogOut");
-        logOut.getStyleClass().add("button");
-        Button deleteAccount = new Button();
-        deleteAccount.setStyle("-fx-font-family: 'Montserrat', sans-serif");
-        deleteAccount.setText("Delete Account");
-        deleteAccount.getStyleClass().add("button");
-
-        String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
-        profileBox.getStylesheets().add(cssFile);
+        HBox.setMargin(cancelUpdate, new Insets(0, 10, 0, 650));
 
         updateEmail.setOnAction(e -> {
             pEmail.setEditable(true);
@@ -544,6 +600,86 @@ public class Main extends Application {
             cancelUpdate.setManaged(false);
 
         });
+
+        // !Password
+        Label profilePassword = new Label("Password : ");
+        profilePassword.setStyle("-fx-font-family: 'Montserrat', sans-serif; -fx-font-size: 20px;");
+        TextField pPassword = new TextField();
+        pPassword.setEditable(false);
+        pPassword.setText(Password);
+        pPassword.setMaxWidth(550);
+        pPassword.setMinHeight(40);
+        pPassword.setPrefWidth(550);
+        pPassword.setMinHeight(40);
+        pPassword.setFont(new javafx.scene.text.Font(15));
+        pPassword.setStyle("-fx-font-family:'Open Sans', sans-serif;");
+        pPassword.getStyleClass().add("search_input");
+        // !Password button Update
+        Button updatePassword = new Button();
+        updatePassword.setStyle("-fx-font-family: 'Montserrat', sans-serif");
+        updatePassword.setText("Update Password");
+        updatePassword.getStyleClass().add("button");
+        Button confirmUpdatePassword = new Button();
+        confirmUpdatePassword.setStyle("-fx-font-family: 'Montserrat', sans-serif");
+        confirmUpdatePassword.setText("Confirm");
+        confirmUpdatePassword.getStyleClass().add("button");
+        confirmUpdatePassword.setVisible(false);
+        confirmUpdatePassword.setManaged(false);
+        Button cancelUpdatePassword = new Button();
+        cancelUpdatePassword.setStyle("-fx-font-family: 'Montserrat', sans-serif");
+        cancelUpdatePassword.setText("Cancel");
+        cancelUpdatePassword.getStyleClass().add("button");
+        cancelUpdatePassword.setVisible(false);
+        cancelUpdatePassword.setManaged(false);
+        HBox buttonPassword = new HBox(10);
+        buttonPassword.getChildren().addAll(cancelUpdatePassword, confirmUpdatePassword);
+        HBox.setMargin(cancelUpdatePassword, new Insets(0, 10, 0, 650));
+        // !Button Update
+        updatePassword.setOnAction(e -> {
+            pPassword.setEditable(true);
+            updatePassword.setVisible(false);
+            updatePassword.setManaged(false);
+            confirmUpdatePassword.setVisible(true);
+            confirmUpdatePassword.setManaged(true);
+            cancelUpdatePassword.setVisible(true);
+            cancelUpdatePassword.setManaged(true);
+
+        });
+        confirmUpdatePassword.setOnAction(e -> {
+            pPassword.setEditable(false);
+            updatePassword.setVisible(true);
+            updatePassword.setManaged(true);
+            confirmUpdatePassword.setVisible(false);
+            confirmUpdatePassword.setManaged(false);
+            cancelUpdatePassword.setVisible(false);
+            cancelUpdatePassword.setManaged(false);
+            String newPassword = pPassword.getText();
+            updatePassword(Password, newPassword, email);
+
+        });
+        cancelUpdatePassword.setOnAction(e -> {
+            pPassword.setEditable(false);
+            updatePassword.setVisible(true);
+            updatePassword.setManaged(true);
+            confirmUpdatePassword.setVisible(false);
+            cancelUpdatePassword.setManaged(false);
+            cancelUpdatePassword.setVisible(false);
+            cancelUpdatePassword.setManaged(false);
+
+        });
+
+        // !Basic Button
+        Button logOut = new Button();
+        logOut.setStyle("-fx-font-family: 'Montserrat', sans-serif");
+        logOut.setText("LogOut");
+        logOut.getStyleClass().add("button");
+        Button deleteAccount = new Button();
+        deleteAccount.setStyle("-fx-font-family: 'Montserrat', sans-serif");
+        deleteAccount.setText("Delete Account");
+        deleteAccount.getStyleClass().add("button");
+        HBox basicButton = new HBox(10);
+        basicButton.getChildren().addAll(logOut, deleteAccount);
+        HBox.setMargin(logOut, new Insets(0, 950, 0, 30));
         logOut.setOnAction(e -> {
             tabPane.getTabs().remove(currentTab);
             tabPane.getTabs().remove(profileTab);
@@ -556,18 +692,212 @@ public class Main extends Application {
             tabPane.getTabs().add(targetTab);
         });
 
-        VBox.setMargin(profileName, new Insets(50, 700, 0, 0));
-        VBox.setMargin(pName, new Insets(0, 350, 0, 50));
+        // !Margin Setting
+
+        VBox.setMargin(profileName, new Insets(0, 700, 0, 0));
+        VBox.setMargin(pName, new Insets(0, 100, 0, 0));
         VBox.setMargin(profileEmail, new Insets(0, 735, 0, 0));
         VBox.setMargin(pEmail, new Insets(0, 100, 0, 0));
+        VBox.setMargin(profilePassword, new Insets(0, 700, 0, 0));
+        VBox.setMargin(pPassword, new Insets(0, 100, 0, 0));
         VBox.setMargin(updateEmail, new Insets(0, 0, 0, 230));
+        VBox.setMargin(updatePassword, new Insets(0, 0, 0, 230));
+        VBox.setMargin(updateName, new Insets(0, 0, 0, 230));
         VBox.setMargin(logOut, new Insets(20, 20, 0, 1100));
         VBox.setMargin(deleteAccount, new Insets(60, 20, 0, 1100));
 
-        profileBox.getChildren().addAll(logOut, profileName, pName, profileEmail, pEmail, updateEmail, button,
-                deleteAccount);
+        profileBox.getChildren().addAll(basicButton, profileName, pName, updateName, buttonName, profileEmail, pEmail,
+                updateEmail,
+                button,
+                profilePassword,
+                pPassword,
+                updatePassword,
+                buttonPassword);
+        String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
+        profileBox.getStylesheets().add(cssFile);
         tabPane.getTabs().add(profileTab);
         tabPane.getSelectionModel().select(profileTab);
+    }
+
+    public void updateName(String oldName, String newName, String userEmail) {
+
+        if (oldName.equals(newName)) {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Duplicated");
+            alert.setHeaderText(null);
+            alert.setContentText("It seems like you re enter your old name.");
+            alert.showAndWait();
+        } else {
+
+            Properties properties = new Properties();
+            try (InputStream input = new FileInputStream(
+                    "E:\\Programming\\Java\\Search_Engine_Java\\src\\Frontend\\config.properties")) {
+                properties.load(input);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            String url = properties.getProperty("db.url");
+            String username = properties.getProperty("db.username");
+            String passwordE = properties.getProperty("db.password");
+            boolean emailFinded = false;
+
+            try (
+                    Connection con = DriverManager.getConnection(url, username, passwordE);
+                    Statement stmt = con.createStatement()) {
+
+                String strSelect = "select name, email, password from users";
+                ResultSet rset = stmt.executeQuery(strSelect);
+
+                while (rset.next()) {
+                    String name = rset.getString("name");
+                    String emaildb = rset.getString("email");
+                    System.out.println(name);
+
+                    if (emaildb.equals(userEmail)) {
+                        emailFinded = true;
+                        break;
+                    } else {
+                        emailFinded = false;
+                    }
+
+                }
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+            if (emailFinded) {
+                try (Connection con = DriverManager.getConnection(url, username, passwordE);
+                        PreparedStatement pstmt = con
+                                .prepareStatement("UPDATE users SET name = ? WHERE email = ?")) {
+                    pstmt.setString(1, newName);
+                    pstmt.setString(2, userEmail);
+                    int rowsUpdated = pstmt.executeUpdate();
+
+                    if (rowsUpdated > 0) {
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Status 200");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Your name has been updated.");
+                        alert.showAndWait();
+                    } else {
+                        Alert alert = new Alert(AlertType.WARNING);
+                        alert.setTitle("Email not found");
+                        alert.setHeaderText(null);
+                        alert.setContentText("The email to be updated was not found.");
+                        alert.showAndWait();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Database Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("An error occurred while updating the email.");
+                    alert.showAndWait();
+                }
+
+            }
+        }
+
+    }
+
+    public void updatePassword(String oldPassword, String newPassword, String userEmail) {
+        if (newPassword.length() < 8) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Length Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Password must me 8 charcter.");
+            alert.showAndWait();
+
+        } else {
+            if (oldPassword.equals(newPassword)) {
+                Alert alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Duplicated");
+                alert.setHeaderText(null);
+                alert.setContentText("It seems like you re enter your old password.");
+                alert.showAndWait();
+            } else {
+
+                Properties properties = new Properties();
+                try (InputStream input = new FileInputStream(
+                        "E:\\Programming\\Java\\Search_Engine_Java\\src\\Frontend\\config.properties")) {
+                    properties.load(input);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    return;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                String url = properties.getProperty("db.url");
+                String username = properties.getProperty("db.username");
+                String passwordE = properties.getProperty("db.password");
+                boolean emailFinded = false;
+
+                try (
+                        Connection con = DriverManager.getConnection(url, username, passwordE);
+                        Statement stmt = con.createStatement()) {
+
+                    String strSelect = "select name, email, password from users";
+                    ResultSet rset = stmt.executeQuery(strSelect);
+
+                    while (rset.next()) {
+                        String name = rset.getString("name");
+                        String emaildb = rset.getString("email");
+                        String passworddb = rset.getString("password");
+                        System.out.println(emaildb + ", " + passworddb + ", " + name);
+
+                        if (emaildb.equals(userEmail)) {
+                            emailFinded = true;
+                            break;
+                        } else {
+                            emailFinded = false;
+                        }
+
+                    }
+
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                if (emailFinded) {
+                    try (Connection con = DriverManager.getConnection(url, username, passwordE);
+                            PreparedStatement pstmt = con
+                                    .prepareStatement("UPDATE users SET password = ? WHERE email = ?")) {
+                        pstmt.setString(1, newPassword);
+                        pstmt.setString(2, userEmail);
+                        int rowsUpdated = pstmt.executeUpdate();
+
+                        if (rowsUpdated > 0) {
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("Status 200");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Your password has been updated.");
+                            alert.showAndWait();
+                        } else {
+                            Alert alert = new Alert(AlertType.WARNING);
+                            alert.setTitle("Email not found");
+                            alert.setHeaderText(null);
+                            alert.setContentText("The email to be updated was not found.");
+                            alert.showAndWait();
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        Alert alert = new Alert(AlertType.ERROR);
+                        alert.setTitle("Database Error");
+                        alert.setHeaderText(null);
+                        alert.setContentText("An error occurred while updating the email.");
+                        alert.showAndWait();
+                    }
+
+                }
+            }
+        }
+
     }
 
     public void deleteAccount(String email) {
