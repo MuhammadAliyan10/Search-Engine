@@ -6,6 +6,7 @@ import javafx.scene.control.ScrollPane;
 import org.json.JSONObject;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +25,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Tab;
@@ -40,6 +44,7 @@ import java.sql.*;
 public class Main extends Application {
     private TabPane loginTabPane;
     private String userName;
+    int tryLeft = 4;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -123,32 +128,42 @@ public class Main extends Application {
             String name = fullName.getText();
             String email = emailTextField.getText();
             String password = passwordTextField.getText();
+
             if (name.isEmpty()) {
                 Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Empty Field");
+                alert.setTitle("Empty Name Field");
                 alert.setHeaderText(null);
-                alert.setContentText("Name is required.");
+                alert.setContentText("Name is required.Please enter your full name.");
                 alert.showAndWait();
 
-            } else if (email.isEmpty()) {
+            }
+            // !Regex
+            // else if (name.matches(".*[^a-zA-Z ].*")) {
+            // Alert alert = new Alert(AlertType.ERROR);
+            // alert.setTitle("Name Error");
+            // alert.setHeaderText(null);
+            // alert.setContentText("Name can only contains alphabet characters.");
+            // alert.showAndWait();
+            // }
+            else if (email.isEmpty()) {
                 Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Empty Field");
+                alert.setTitle("Empty Email Field");
                 alert.setHeaderText(null);
-                alert.setContentText("Email is required.");
+                alert.setContentText("Email is required.Please enter a valid email address.");
                 alert.showAndWait();
 
             } else if (password.isEmpty()) {
                 Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Empty Field");
+                alert.setTitle("Empty Password Field");
                 alert.setHeaderText(null);
-                alert.setContentText("Password is required.");
+                alert.setContentText("Password is required.Please enter a valid & strong password.");
                 alert.showAndWait();
 
             } else if (password.length() < 8) {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Security Error");
                 alert.setHeaderText(null);
-                alert.setContentText("Password must be minimum of 8 character.");
+                alert.setContentText("Due to security reasons password must be minimum of 8 character.");
                 alert.showAndWait();
             } else {
                 if (email.contains("@gmail.com")) {
@@ -165,9 +180,9 @@ public class Main extends Application {
                     }
                 } else {
                     Alert alert = new Alert(AlertType.WARNING);
-                    alert.setTitle("Error");
+                    alert.setTitle("Email Error");
                     alert.setHeaderText(null); // No header text
-                    alert.setContentText("Please enter a valid email.");
+                    alert.setContentText("Please enter a valid email. Example abc@gmail.com.");
                     alert.showAndWait();
 
                 }
@@ -180,129 +195,121 @@ public class Main extends Application {
             String email = emailTextField.getText();
             String password = passwordTextField.getText();
             if (email.isEmpty()) {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Empty Field");
-                alert.setHeaderText(null); // No header text
-                alert.setContentText("Email is required.");
+                Alert alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Email Required");
+                alert.setHeaderText(null);
+                alert.setContentText("Email is required. Please enter a valid email address.");
                 alert.showAndWait();
-
+            } else if (!email.contains("@gmail.com")) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Empty Email Field");
+                alert.setHeaderText(null);
+                alert.setContentText("Please enter a valid email.For example abc@gmail.com.");
+                alert.showAndWait();
             } else if (password.isEmpty()) {
                 Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Empty Field");
+                alert.setTitle("Empty Password Field");
                 alert.setHeaderText(null); // No header text
-                alert.setContentText("Password is required.");
+                alert.setContentText("Password is required. Please enter your account passowrd.");
                 alert.showAndWait();
             } else {
-                if (email.contains("@gmail.com")) {
-                    try {
-                        boolean finalValue = authencation(email, password);
-                        if (finalValue) {
-                            loginTabPane.getTabs().remove(LoginmainTab);
-                            Tab mainTab = new Tab("Google");
-                            mainTab.setClosable(false);
-                            VBox mainTabContent = new VBox(20);
-                            mainTabContent.setBackground(
-                                    new Background(
-                                            new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY, Insets.EMPTY)));
-                            mainTabContent.setAlignment(Pos.TOP_CENTER);
+                try {
+                    boolean finalValue = authentication(email, password, passwordTextField);
+                    if (finalValue) {
+                        loginTabPane.getTabs().remove(LoginmainTab);
+                        Tab mainTab = new Tab("Google");
+                        mainTab.setClosable(false);
+                        VBox mainTabContent = new VBox(20);
+                        mainTabContent.setBackground(
+                                new Background(
+                                        new BackgroundFill(Color.web("#202124"), CornerRadii.EMPTY,
+                                                Insets.EMPTY)));
+                        mainTabContent.setAlignment(Pos.TOP_CENTER);
 
-                            Button showProfile = new Button();
-                            showProfile.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-                            showProfile.setText("Show Profile");
-                            showProfile.getStyleClass().add("button");
-                            VBox.setMargin(showProfile, new Insets(20, 0, 20, 1100));
-                            mainTabContent.getChildren().add(showProfile);
+                        Button showProfile = new Button();
+                        showProfile.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                        showProfile.setText("Show Profile");
+                        showProfile.getStyleClass().add("button");
+                        VBox.setMargin(showProfile, new Insets(20, 0, 20, 1100));
+                        mainTabContent.getChildren().add(showProfile);
 
-                            showProfile.setOnAction(e -> {
-                                showUserProfile(userName, email, password, loginTabPane, mainTab, LoginmainTab);
-                                emailTextField.clear();
-                                passwordTextField.clear();
-                                fullName.clear();
-                            });
+                        showProfile.setOnAction(e -> {
+                            showUserProfile(userName, email, password, loginTabPane, mainTab, LoginmainTab);
+                            emailTextField.clear();
+                            passwordTextField.clear();
+                            fullName.clear();
+                        });
 
-                            // ! Top Google image
-                            Image headingImage = new Image(
-                                    getClass().getResourceAsStream("/Frontend/Images/Google.png"));
-                            ImageView imageView = new ImageView(headingImage);
-                            imageView.setFitWidth(500);
-                            imageView.setFitHeight(170);
-                            mainTabContent.getChildren().addAll(imageView);
+                        // ! Top Google image
+                        Image headingImage = new Image(
+                                getClass().getResourceAsStream("/Frontend/Images/Google.png"));
+                        ImageView imageView = new ImageView(headingImage);
+                        imageView.setFitWidth(500);
+                        imageView.setFitHeight(170);
+                        mainTabContent.getChildren().addAll(imageView);
 
-                            // ! Input Text Field
-                            TextField searchInputTextField = new TextField();
-                            searchInputTextField.setPromptText("Search Google or type a URL");
-                            searchInputTextField.setMaxWidth(550);
-                            searchInputTextField.setMinHeight(40);
-                            searchInputTextField.setPrefWidth(550);
-                            searchInputTextField.setMinHeight(40);
-                            searchInputTextField.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-                            searchInputTextField.setFont(new javafx.scene.text.Font(15));
-                            searchInputTextField.getStyleClass().add("search_input");
-                            mainTabContent.getChildren().addAll(searchInputTextField);
+                        // ! Input Text Field
+                        TextField searchInputTextField = new TextField();
+                        searchInputTextField.setPromptText("Search Google or type a URL");
+                        searchInputTextField.setMaxWidth(550);
+                        searchInputTextField.setMinHeight(40);
+                        searchInputTextField.setPrefWidth(550);
+                        searchInputTextField.setMinHeight(40);
+                        searchInputTextField.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                        searchInputTextField.setFont(new javafx.scene.text.Font(15));
+                        searchInputTextField.getStyleClass().add("search_input");
+                        mainTabContent.getChildren().addAll(searchInputTextField);
 
-                            // ! Submit Button
-                            Button ButtonSearch = new Button();
-                            ButtonSearch.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-                            ButtonSearch.setText("Google Search");
-                            ButtonSearch.getStyleClass().add("button");
-                            Button feelingLucky = new Button();
-                            feelingLucky.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
-                            feelingLucky.setText("Feeling Lucky");
-                            feelingLucky.getStyleClass().add("button");
+                        // ! Submit Button
+                        Button ButtonSearch = new Button();
+                        ButtonSearch.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                        ButtonSearch.setText("Google Search");
+                        ButtonSearch.getStyleClass().add("button");
+                        Button feelingLucky = new Button();
+                        feelingLucky.setStyle("-fx-font-family: 'Montserrat', sans-serif;");
+                        feelingLucky.setText("Feeling Lucky");
+                        feelingLucky.getStyleClass().add("button");
 
-                            // ! Hbox for button
-                            HBox button = new HBox(10);
-                            button.getChildren().addAll(ButtonSearch, feelingLucky);
-                            HBox.setMargin(ButtonSearch, new Insets(0, 10, 153, 500));
-                            mainTabContent.getChildren().addAll(button);
+                        // ! Hbox for button
+                        HBox button = new HBox(10);
+                        button.getChildren().addAll(ButtonSearch, feelingLucky);
+                        HBox.setMargin(ButtonSearch, new Insets(0, 10, 153, 500));
+                        mainTabContent.getChildren().addAll(button);
 
-                            mainTab.setContent(mainTabContent);
-                            loginTabPane.getTabs().add(mainTab);
-                            VBox.setMargin(imageView, new Insets(50, 0, 0, 0));
-                            VBox.setMargin(searchInputTextField, new Insets(10, 0, 0, 0));
-                            VBox.setMargin(ButtonSearch, new Insets(0, 0, 0, 0));
+                        mainTab.setContent(mainTabContent);
+                        loginTabPane.getTabs().add(mainTab);
+                        VBox.setMargin(imageView, new Insets(50, 0, 0, 0));
+                        VBox.setMargin(searchInputTextField, new Insets(10, 0, 0, 0));
+                        VBox.setMargin(ButtonSearch, new Insets(0, 0, 0, 0));
 
-                            // ! Event handler for search button
-                            ButtonSearch.setOnAction(e -> {
-                                try {
-                                    showSearchResults(loginTabPane, searchInputTextField.getText());
-                                    searchInputTextField.clear();
-                                } catch (FileNotFoundException e1) {
-                                    e1.printStackTrace();
-                                } catch (IOException e1) {
-                                    e1.printStackTrace();
-                                }
-                            });
+                        // ! Event handler for search button
+                        ButtonSearch.setOnAction(e -> {
+                            try {
+                                showSearchResults(loginTabPane, searchInputTextField.getText());
+                                searchInputTextField.clear();
+                            } catch (FileNotFoundException e1) {
+                                e1.printStackTrace();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        });
 
-                            String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
-                            mainTabContent.getStylesheets().add(cssFile);
-                            primaryStage.setTitle("Google");
-                            primaryStage.getIcons()
-                                    .add(new Image(getClass().getResourceAsStream("/Frontend/Images/logo.png")));
-                            primaryStage.setScene(new Scene(loginTabPane, 1270, 685));
-                            primaryStage.show();
-                        } else {
-                            Alert alert = new Alert(AlertType.ERROR);
-                            alert.setTitle("No User Found");
-                            alert.setHeaderText(null); // No header text
-                            alert.setContentText("No user found. If you dont have account please Sign Up.");
-                            alert.showAndWait();
-                        }
-                    } catch (FileNotFoundException e) {
-
-                        e.printStackTrace();
-                    } catch (IOException e) {
-
-                        e.printStackTrace();
+                        String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
+                        mainTabContent.getStylesheets().add(cssFile);
+                        primaryStage.setTitle("Google");
+                        primaryStage.getIcons()
+                                .add(new Image(getClass().getResourceAsStream("/Frontend/Images/logo.png")));
+                        primaryStage.setScene(new Scene(loginTabPane, 1270, 685));
+                        primaryStage.show();
                     }
-                } else {
-                    Alert alert = new Alert(AlertType.WARNING);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Please enter a valid email.");
-                    alert.showAndWait();
+                } catch (FileNotFoundException e) {
+
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
+
         });
 
         Button logIn = new Button();
@@ -340,6 +347,7 @@ public class Main extends Application {
             header.getStyleClass().add("search_buttonL");
             signUp.setDisable(true);
             logIn.setDisable(false);
+            passwordTextField.setEditable(true);
             header.setText("SignUp Page");
             fullName.setVisible(true);
             fullName.setManaged(true);
@@ -355,7 +363,8 @@ public class Main extends Application {
         });
 
         // ! Hbox for button
-        HBox button = new HBox(10);
+        HBox button = new HBox(
+                10);
         button.getChildren().addAll(logIn, signUp);
         HBox.setMargin(logIn, new Insets(0, 0, 150, 385));
         LoginmainTabContent.getChildren().addAll(button);
@@ -365,11 +374,11 @@ public class Main extends Application {
         VBox.setMargin(emailTextField, new Insets(10, 0, 0, 0));
         VBox.setMargin(passwordTextField, new Insets(10, 0, 0, 0));
         VBox.setMargin(header, new Insets(80, 0, 50, 0));
-        String cssFile = getClass().getResource("/Frontend/Style.css").toExternalForm();
+        String cssFile = getClass().getResource("/Frontend/Style.css")
+                .toExternalForm();
         LoginmainTabContent.getStylesheets().add(cssFile);
         primaryStage.setTitle("Login");
-        primaryStage.getIcons()
-                .add(new Image(getClass().getResourceAsStream("/Frontend/Images/logo.png")));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/Frontend/Images/logo.png")));
         primaryStage.setScene(new Scene(loginTabPane, 1270, 685));
         primaryStage.show();
     }
@@ -399,9 +408,9 @@ public class Main extends Application {
             }
             if (emailExists) {
                 Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Error");
+                alert.setTitle("Duplicate Error");
                 alert.setHeaderText(null);
-                alert.setContentText("This email hase already an account");
+                alert.setContentText("This email hase already an account.Please choose a different one.");
                 alert.showAndWait();
             } else {
                 String added = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
@@ -413,13 +422,13 @@ public class Main extends Application {
                     int rowsAffected = pstmt.executeUpdate();
                     if (rowsAffected > 0) {
                         Alert alert = new Alert(AlertType.INFORMATION);
-                        alert.setTitle("New User");
+                        alert.setTitle("New User Added");
                         alert.setHeaderText(null);
                         alert.setContentText("You signed up successfully. Log in to continue");
                         alert.showAndWait();
                     } else {
                         Alert alert = new Alert(AlertType.ERROR);
-                        alert.setTitle("Error");
+                        alert.setTitle("Database Error.");
                         alert.setHeaderText(null);
                         alert.setContentText("Error occurred during sign-up. Please try again.");
                         alert.showAndWait();
@@ -477,16 +486,7 @@ public class Main extends Application {
         HBox.setMargin(cancelUpdateName, new Insets(0, 10, 0, 650));
 
         // !Button Function
-        updateName.setOnAction(e -> {
-            pName.setEditable(true);
-            updateName.setVisible(false);
-            updateName.setManaged(false);
-            confirmUpdateName.setVisible(true);
-            confirmUpdateName.setManaged(true);
-            cancelUpdateName.setVisible(true);
-            cancelUpdateName.setManaged(true);
 
-        });
         confirmUpdateName.setOnAction(e -> {
             pName.setEditable(false);
             updateName.setVisible(true);
@@ -496,7 +496,19 @@ public class Main extends Application {
             cancelUpdateName.setVisible(false);
             cancelUpdateName.setManaged(false);
             String newName = pName.getText();
-            updateName(userName, newName, email);
+            String finalShowName = updateName(userName, newName, email);
+            pName.setText(finalShowName);
+
+        });
+
+        updateName.setOnAction(e -> {
+            pName.setEditable(true);
+            updateName.setVisible(false);
+            updateName.setManaged(false);
+            confirmUpdateName.setVisible(true);
+            confirmUpdateName.setManaged(true);
+            cancelUpdateName.setVisible(true);
+            cancelUpdateName.setManaged(true);
 
         });
         cancelUpdateName.setOnAction(e -> {
@@ -564,8 +576,8 @@ public class Main extends Application {
             cancelUpdate.setVisible(false);
             cancelUpdate.setManaged(false);
             String newEmail = pEmail.getText();
-            updateEmail(email, newEmail);
-
+            String finalShowEmail = updateEmail(email, newEmail);
+            pEmail.setText(finalShowEmail);
         });
         cancelUpdate.setOnAction(e -> {
             pEmail.setEditable(false);
@@ -631,7 +643,8 @@ public class Main extends Application {
             cancelUpdatePassword.setVisible(false);
             cancelUpdatePassword.setManaged(false);
             String newPassword = pPassword.getText();
-            updatePassword(Password, newPassword, email);
+            String finalShowPassword = updatePassword(Password, newPassword, email);
+            pPassword.setText(finalShowPassword);
 
         });
         cancelUpdatePassword.setOnAction(e -> {
@@ -663,10 +676,28 @@ public class Main extends Application {
             tabPane.getTabs().add(targetTab);
         });
         deleteAccount.setOnAction(e -> {
-            deleteAccount(email);
-            tabPane.getTabs().remove(currentTab);
-            tabPane.getTabs().remove(profileTab);
-            tabPane.getTabs().add(targetTab);
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("Confirmation Delete");
+            dialog.setHeaderText(null);
+            dialog.setContentText(
+                    "Are you sure you want to delete this account? By clicking yes your acxount will deleted permanently.");
+            ButtonType buttonTypeYes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+            ButtonType buttonTypeNo = new ButtonType("No", ButtonBar.ButtonData.NO);
+            dialog.getDialogPane().getButtonTypes().addAll(buttonTypeYes, buttonTypeNo);
+
+            dialog.setResultConverter(buttonType -> {
+                if (buttonType == buttonTypeYes) {
+                    deleteAccount(email);
+                    tabPane.getTabs().remove(currentTab);
+                    tabPane.getTabs().remove(profileTab);
+                    tabPane.getTabs().add(targetTab);
+
+                }
+                return null;
+            });
+
+            Optional<ButtonType> result = dialog.showAndWait();
+
         });
 
         // !Margin Setting
@@ -696,26 +727,36 @@ public class Main extends Application {
         tabPane.getSelectionModel().select(profileTab);
     }
 
-    public void updateName(String oldName, String newName, String userEmail) {
+    public String updateName(String oldName, String newName, String userEmail) {
+        String finalUpdatedName = oldName;
 
         if (oldName.equals(newName)) {
             Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Duplicated");
+            alert.setTitle("Duplicated Error");
             alert.setHeaderText(null);
-            alert.setContentText("It seems like you re enter your old name.");
+            alert.setContentText("It seems like you reenter your old name. Please enter a new name.");
             alert.showAndWait();
-        } else {
+        }
+        // !Regex
+        // else if (newName.matches(".*[^a-zA-Z ].*")) {
+        // Alert alert = new Alert(AlertType.ERROR);
+        // alert.setTitle("Name Error");
+        // alert.setHeaderText(null);
+        // alert.setContentText("Name can only contains alphabet characters.");
+        // alert.showAndWait();
 
+        // }
+        else {
             Properties properties = new Properties();
             try (InputStream input = new FileInputStream(
                     "E:\\Programming\\Java\\Search_Engine_Java\\src\\Frontend\\config.properties")) {
                 properties.load(input);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                return;
+
             } catch (IOException e) {
                 e.printStackTrace();
-                return;
+
             }
 
             String url = properties.getProperty("db.url");
@@ -732,7 +773,6 @@ public class Main extends Application {
                 while (rset.next()) {
                     String name = rset.getString("name");
                     String emaildb = rset.getString("email");
-                    System.out.println(name);
                     if (emaildb.equals(userEmail)) {
                         emailFinded = true;
                         break;
@@ -759,6 +799,7 @@ public class Main extends Application {
                         alert.setHeaderText(null);
                         alert.setContentText("Your name has been updated.");
                         alert.showAndWait();
+                        finalUpdatedName = newName;
                     } else {
                         Alert alert = new Alert(AlertType.WARNING);
                         alert.setTitle("Email not found");
@@ -777,23 +818,26 @@ public class Main extends Application {
 
             }
         }
+        return finalUpdatedName;
 
     }
 
-    public void updatePassword(String oldPassword, String newPassword, String userEmail) {
+    public String updatePassword(String oldPassword, String newPassword, String userEmail) {
+        String finalUpdatedPassword = oldPassword;
         if (newPassword.length() < 8) {
             Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Length Error");
+            alert.setTitle("Securoty Error");
             alert.setHeaderText(null);
-            alert.setContentText("Password must me 8 charcter.");
+            alert.setContentText("Due to security reasons the password must be minimum of 8 charcter.");
             alert.showAndWait();
 
         } else {
             if (oldPassword.equals(newPassword)) {
                 Alert alert = new Alert(AlertType.WARNING);
-                alert.setTitle("Duplicated");
+                alert.setTitle("Duplicated Password");
                 alert.setHeaderText(null);
-                alert.setContentText("It seems like you re enter your old password.");
+                alert.setContentText(
+                        "It seems like you re enter your old password.Please add an new & strong password.");
                 alert.showAndWait();
             } else {
 
@@ -803,10 +847,10 @@ public class Main extends Application {
                     properties.load(input);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    return;
+
                 } catch (IOException e) {
                     e.printStackTrace();
-                    return;
+
                 }
 
                 String url = properties.getProperty("db.url");
@@ -822,11 +866,7 @@ public class Main extends Application {
                     ResultSet rset = stmt.executeQuery(strSelect);
 
                     while (rset.next()) {
-                        String name = rset.getString("name");
                         String emaildb = rset.getString("email");
-                        String passworddb = rset.getString("password");
-                        System.out.println(emaildb + ", " + passworddb + ", " + name);
-
                         if (emaildb.equals(userEmail)) {
                             emailFinded = true;
                             break;
@@ -835,7 +875,6 @@ public class Main extends Application {
                         }
 
                     }
-
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
                 }
@@ -853,6 +892,7 @@ public class Main extends Application {
                             alert.setHeaderText(null);
                             alert.setContentText("Your password has been updated.");
                             alert.showAndWait();
+                            finalUpdatedPassword = newPassword;
                         } else {
                             Alert alert = new Alert(AlertType.WARNING);
                             alert.setTitle("Email not found");
@@ -871,14 +911,16 @@ public class Main extends Application {
                 }
             }
         }
+        return finalUpdatedPassword;
     }
 
-    public void updateEmail(String previousEmail, String newEmail) {
+    public String updateEmail(String previousEmail, String newEmail) {
+        String finalUpdatedEmail = previousEmail;
         if (previousEmail.equals(newEmail)) {
             Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Duplicated");
+            alert.setTitle("Duplicated Email.");
             alert.setHeaderText(null);
-            alert.setContentText("It seems like you reenter your old email.");
+            alert.setContentText("It seems like you reenter your old email. Please enter a new and valid email.");
             alert.showAndWait();
         } else {
             if (newEmail.contains("@gmail.com")) {
@@ -888,10 +930,10 @@ public class Main extends Application {
                     properties.load(input);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    return;
+
                 } catch (IOException e) {
                     e.printStackTrace();
-                    return;
+
                 }
 
                 String url = properties.getProperty("db.url");
@@ -907,11 +949,7 @@ public class Main extends Application {
                     ResultSet rset = stmt.executeQuery(strSelect);
 
                     while (rset.next()) {
-                        String name = rset.getString("name");
                         String emaildb = rset.getString("email");
-                        String passworddb = rset.getString("password");
-                        System.out.println(emaildb + ", " + passworddb + ", " + name);
-
                         if (emaildb.equals(newEmail)) {
                             emailFinded = true;
                             break;
@@ -926,9 +964,9 @@ public class Main extends Application {
                 }
                 if (emailFinded) {
                     Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Dublicate");
+                    alert.setTitle("Dublicate Email");
                     alert.setHeaderText(null);
-                    alert.setContentText("The user with same email exist. Please chose a different email.");
+                    alert.setContentText("The user with same email exist. Please chose a different & valid email.");
                     alert.showAndWait();
 
                 } else {
@@ -945,6 +983,7 @@ public class Main extends Application {
                             alert.setHeaderText(null);
                             alert.setContentText("Your email has been updated.");
                             alert.showAndWait();
+                            finalUpdatedEmail = newEmail;
                         } else {
                             Alert alert = new Alert(AlertType.WARNING);
                             alert.setTitle("Email not found");
@@ -969,6 +1008,7 @@ public class Main extends Application {
                 alert.showAndWait();
             }
         }
+        return finalUpdatedEmail;
     }
 
     public void deleteAccount(String email) {
@@ -1000,7 +1040,7 @@ public class Main extends Application {
                 alert.showAndWait();
             } else {
                 Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("DataBase Erro");
+                alert.setTitle("DataBase Error");
                 alert.setHeaderText(null);
                 alert.setContentText("Failed to delete account.Please try again later. ");
                 alert.showAndWait();
@@ -1011,18 +1051,24 @@ public class Main extends Application {
         }
     }
 
-    public boolean authencation(String email, String password) throws FileNotFoundException, IOException {
+    public boolean authentication(String email, String password, PasswordField passwordField)
+            throws FileNotFoundException, IOException {
         Properties properties = new Properties();
-        boolean emailFinded = false;
+        boolean emailFound = false;
+
         try (InputStream input = new FileInputStream(
                 "E:\\Programming\\Java\\Search_Engine_Java\\src\\Frontend\\config.properties")) {
             properties.load(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+
         }
+
         String url = properties.getProperty("db.url");
         String username = properties.getProperty("db.username");
         String passwordE = properties.getProperty("db.password");
-        try (
-                Connection con = DriverManager.getConnection(url, username, passwordE);
+
+        try (Connection con = DriverManager.getConnection(url, username, passwordE);
                 Statement stmt = con.createStatement()) {
 
             String strSelect = "select name, email, password from users";
@@ -1032,21 +1078,48 @@ public class Main extends Application {
                 String name = rset.getString("name");
                 String emaildb = rset.getString("email");
                 String passworddb = rset.getString("password");
-                System.out.println(emaildb + ", " + passworddb + ", " + name);
-                if (emaildb.equals(email) && passworddb.equals(password)) {
-                    emailFinded = true;
-                    userName = name;
-                    break;
-                } else {
-                    emailFinded = false;
-                }
+                if (email.equals(emaildb)) {
+                    emailFound = true;
+                    if (password.equals(passworddb)) {
+                        userName = name;
+                        return true;
+                    } else {
+                        tryLeft--;
+                        if (tryLeft > 0) {
 
+                            Alert alert = new Alert(AlertType.ERROR);
+                            alert.setTitle("Password Failed");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Incorrect Password. Attempts left: " + tryLeft);
+                            alert.showAndWait();
+                        } else {
+
+                            Alert alert = new Alert(AlertType.ERROR);
+                            alert.setTitle("Authentication Failed");
+                            alert.setHeaderText(null);
+                            alert.setContentText(
+                                    "Due to security reasons, you are not allowed to attempt more passwords.");
+                            alert.showAndWait();
+                            passwordField.setEditable(false);
+                        }
+                    }
+                }
+            }
+
+            // Email not found in database
+            if (!emailFound) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("No User Found");
+                alert.setHeaderText(null);
+                alert.setContentText("No user found. If you don't have an account, please Sign Up.");
+                alert.showAndWait();
             }
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+            // Handle SQLException
         }
-        return emailFinded;
+        return false; // Return false if authentication fails
     }
 
     private void showSearchResults(TabPane tabPane, String query) throws FileNotFoundException, IOException {
