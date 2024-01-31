@@ -50,7 +50,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         // ! Main tab for initial UI setup
         loginTabPane = new TabPane();
-        new TabPane();
         Tab LoginmainTab = new Tab("Login");
         LoginmainTab.setClosable(false);
         VBox LoginmainTabContent = new VBox(20);
@@ -64,7 +63,7 @@ public class Main extends Application {
 
         // !To lable
         Button header = new Button();
-        header.setText("LogIn Page");
+        header.setText("Login Page");
         header.setStyle(
                 "-fx-font-family: 'Montserrat', sans-serif; -fx-background-color: #ffb600;-fx-border-color: #ffb600; -fx-text-fill: #fff;");
         header.getStyleClass().add("search_button");
