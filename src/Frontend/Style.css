@@ -4,8 +4,8 @@
     -fx-border-color: #5f6368;
     -fx-background-color: #ffffff;
     -fx-font-size: 14px;
-    -fx-background-radius: 20px;
-    -fx-border-radius: 20px;
+    /* -fx-background-radius: 20px; */
+    /* -fx-border-radius: 20px; */
 
 }
 

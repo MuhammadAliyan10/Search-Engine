@@ -1143,7 +1143,6 @@ public class Main extends Application {
             JSONObject jsonResponse = new JSONObject(body);
             if (jsonResponse.has("items")) {
                 JSONArray itemsArray = jsonResponse.getJSONArray("items");
-
                 int result = itemsArray.length();
                 if (itemsArray.length() > 0) {
                     String[] titles = new String[itemsArray.length()];
